@@ -17,5 +17,13 @@ class Assets {
   /// Assets for assetsImagesSmallerAppIcon
   /// assets/images/smaller_app_icon.png
   static const String assetsImagesSmallerAppIcon = "assets/images/smaller_app_icon.png";
+
+  /// Assets for assetsSvgsGoogle
+  /// assets/svgs/google.svg
+  static const String assetsSvgsGoogle = "assets/svgs/google.svg";
+
+  /// Assets for assetsSvgsHideIcon
+  /// assets/svgs/hide_icon.svg
+  static const String assetsSvgsHideIcon = "assets/svgs/hide_icon.svg";
 }
 

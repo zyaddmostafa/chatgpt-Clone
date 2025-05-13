@@ -1,16 +1,32 @@
-import 'package:chatgpt/core/routing/routes.dart';
+import 'package:chatgpt/screens/sign_up_screen.dart';
 import 'package:chatgpt/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:chatgpt/core/routing/routes.dart';
+// Import your screen widgets
 
 class AppRoutes {
-  Route? generateRoute(RouteSettings settings) {
-    // final args = settings.arguments;
-
+  static Route<dynamic> ongenerateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case Routes.welocmeScreen:
-        MaterialPageRoute(builder: (context) => const WelcomeScreen());
+      case Routes.welcomeScreen:
+        return MaterialPageRoute(
+          builder: (_) => const WelcomeScreen(), // Create this screen
+          settings: settings,
+        );
+
+      case Routes.signupScreen:
+        return MaterialPageRoute(
+          builder: (_) => const SignUpScreen(), // Create this screen
+          settings: settings,
+        );
       default:
-        return null;
+        return MaterialPageRoute(
+          builder:
+              (_) => Scaffold(
+                body: Center(
+                  child: Text('No route defined for ${settings.name}'),
+                ),
+              ),
+        );
     }
   }
 }

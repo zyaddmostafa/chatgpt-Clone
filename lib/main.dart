@@ -1,4 +1,5 @@
-import 'package:chatgpt/screens/welcome_screen.dart';
+import 'package:chatgpt/core/routing/app_routes.dart';
+import 'package:chatgpt/core/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(fontFamily: 'PingFang SC'),
         debugShowCheckedModeBanner: false,
-        home: WelcomeScreen(),
+        onGenerateRoute: AppRoutes.ongenerateRoute,
+        initialRoute: Routes.welcomeScreen,
       ),
     );
   }

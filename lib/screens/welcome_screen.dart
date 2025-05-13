@@ -1,6 +1,8 @@
+import 'package:chatgpt/core/routing/routes.dart';
 import 'package:chatgpt/core/theme/app_color.dart';
 import 'package:chatgpt/core/theme/app_textstyles.dart';
 import 'package:chatgpt/core/utils/assets.dart';
+import 'package:chatgpt/core/utils/extention.dart';
 import 'package:chatgpt/core/utils/spacing.dart';
 import 'package:chatgpt/core/widgets/custom_app_button.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +48,8 @@ class WelcomeScreen extends StatelessWidget {
               color: Colors.white,
               borderColor: AppColor.primaryColor,
               textColor: AppColor.primaryColor,
+              onPressed:
+                  () => context.pushReplacementNamed(Routes.signupScreen),
             ),
           ],
         ),
