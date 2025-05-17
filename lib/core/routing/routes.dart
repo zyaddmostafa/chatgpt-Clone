@@ -5,4 +5,5 @@ class Routes {
   static const String enterNameScreen = '/enterNameScreen';
   static const String phoneVerificationScreen = '/phoneVerificationScreen';
   static const String enterCodeScreen = '/enterCodeScreen';
+  static const String authFlow = '/authFlow';
 }

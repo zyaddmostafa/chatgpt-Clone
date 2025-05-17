@@ -4,7 +4,9 @@ import 'package:chatgpt/core/utils/spacing.dart';
 import 'package:chatgpt/core/widgets/auth_header.dart';
 import 'package:chatgpt/core/widgets/custom_app_button.dart';
 import 'package:chatgpt/core/widgets/custom_text_form_field.dart';
+import 'package:chatgpt/feature/auth/presentation/cubits/signup_cubit/sign_up_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PhoneNumberVerification extends StatefulWidget {
   const PhoneNumberVerification({super.key});
@@ -33,38 +35,50 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
               GestureDetector(
                 onTap: _showCountryPicker,
                 child: Container(
+                  width: double.infinity,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
                     border: Border.all(color: const Color(0xFFE5E6EB)),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(50),
                   ),
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(selectedCountry.flag),
-                      const SizedBox(width: 8),
-                      Text(selectedCountry.dialCode),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.arrow_drop_down, size: 20),
+                      Text(
+                        selectedCountry.flag,
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                      horizontalSpacing(8),
+                      Text(
+                        selectedCountry.dialCode,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Spacer(),
+                      const Icon(Icons.arrow_drop_down_outlined, size: 20),
                     ],
                   ),
                 ),
               ),
 
               verticalSpacing(12),
-              CustomTextFormField(
-                hintText: 'Phone Number',
-
-                keyboardType: TextInputType.phone,
-              ),
+              PhoneNumberVerificationForm(),
               verticalSpacing(24),
               CustomAppButton(
                 text: 'Send Code',
                 onPressed: () {
-                  context.pushReplacementNamed(Routes.enterCodeScreen);
+                  if (context
+                      .read<SignUpCubit>()
+                      .phoneVerificationFormKey
+                      .currentState!
+                      .validate()) {
+                    context.read<SignUpCubit>().signUpUsingEmailAndPassword();
+                    context.pushReplacementNamed(Routes.enterCodeScreen);
+                  }
                 },
               ),
             ],
@@ -83,7 +97,6 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
       ),
       builder: (context) {
         return Container(
-          width: double.infinity,
           height: MediaQuery.of(context).size.height * 0.7,
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -110,6 +123,8 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
                         setState(() {
                           selectedCountry = country;
                         });
+                        context.read<SignUpCubit>().dialCodeController.text =
+                            country.dialCode;
                         Navigator.pop(context);
                       },
                     );
@@ -151,3 +166,23 @@ final List<Country> countries = [
   Country(name: 'Russia', flag: '🇷🇺', dialCode: '+7'),
   Country(name: 'Egypt', flag: '🇪🇬', dialCode: '+20'),
 ];
+
+class PhoneNumberVerificationForm extends StatelessWidget {
+  const PhoneNumberVerificationForm({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: context.read<SignUpCubit>().phoneVerificationFormKey,
+      child: Column(
+        children: [
+          CustomTextFormField(
+            hintText: 'Phone Number',
+            controller: context.read<SignUpCubit>().phoneNumberController,
+            keyboardType: TextInputType.phone,
+          ),
+        ],
+      ),
+    );
+  }
+}
