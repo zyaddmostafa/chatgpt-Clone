@@ -57,7 +57,7 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
               verticalSpacing(12),
               CustomTextFormField(
                 hintText: 'Phone Number',
-                onTap: () {},
+
                 keyboardType: TextInputType.phone,
               ),
               verticalSpacing(24),

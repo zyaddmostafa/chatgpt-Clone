@@ -12,8 +12,8 @@ import 'package:chatgpt/core/widgets/social_media_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +24,10 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AuthHeader(title: 'Welcome Back!'),
+              AuthHeader(title: 'Create your account'),
               verticalSpacing(16),
               Text(
-                'Log in to continue exploring, managing your account, and accessing personalized features.',
+                'Please note that phone verification is required for sign up. Your number will only be used to verify your identity for security purpose.',
                 style: AppTextstyles.font12Regular,
                 textAlign: TextAlign.center,
               ),
@@ -36,14 +36,13 @@ class LoginScreen extends StatelessWidget {
               CustomTextFormField(
                 hintText: 'Email address',
                 obscureText: false,
-                onTap: () {},
               ),
               verticalSpacing(24),
 
               CustomTextFormField(
                 hintText: 'Password',
                 obscureText: false,
-                onTap: () {},
+
                 suffixIcon: IconButton(
                   icon: SvgPicture.asset(
                     Assets.assetsSvgsHideIcon,
@@ -69,8 +68,8 @@ class LoginScreen extends StatelessWidget {
               ),
               verticalSpacing(16),
               AlreadyHaveAnAccountOrCreateAccount(
-                title: 'You don\'t have an account?',
-                navigationText: 'Signup',
+                title: 'Already have an account',
+                navigationText: 'Log in',
               ),
               verticalSpacing(36),
               CustomDivider(),

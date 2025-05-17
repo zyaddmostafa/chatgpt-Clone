@@ -24,7 +24,7 @@ class EnterCodeScreen extends StatelessWidget {
               verticalSpacing(24),
               CustomTextFormField(
                 hintText: '000000',
-                onTap: () {},
+
                 keyboardType: TextInputType.number,
                 contentPadding: EdgeInsets.symmetric(horizontal: 150),
               ),

@@ -6,7 +6,7 @@ class CustomTextFormField extends StatelessWidget {
   final String hintText;
   final Widget? suffixIcon;
   final bool? obscureText;
-  final VoidCallback onTap;
+  final TextEditingController? controller;
   final TextInputType? keyboardType;
   final EdgeInsetsGeometry? contentPadding;
   const CustomTextFormField({
@@ -14,15 +14,23 @@ class CustomTextFormField extends StatelessWidget {
     required this.hintText,
     this.suffixIcon,
     this.obscureText,
-    required this.onTap,
+    this.controller,
     this.keyboardType,
     this.contentPadding,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       keyboardType: keyboardType,
+      controller: controller,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your $hintText';
+        }
+        return null;
+      },
+
       decoration: InputDecoration(
         contentPadding: contentPadding,
 

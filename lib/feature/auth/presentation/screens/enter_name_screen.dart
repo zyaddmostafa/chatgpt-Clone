@@ -19,9 +19,9 @@ class EnterNameScreen extends StatelessWidget {
             children: [
               AuthHeader(title: 'Tell us About You'),
               verticalSpacing(24),
-              CustomTextFormField(hintText: 'First Name', onTap: () {}),
+              CustomTextFormField(hintText: 'First Name'),
               verticalSpacing(24),
-              CustomTextFormField(hintText: 'Last Name', onTap: () {}),
+              CustomTextFormField(hintText: 'Last Name'),
               verticalSpacing(24),
               CustomAppButton(
                 text: 'Continue',

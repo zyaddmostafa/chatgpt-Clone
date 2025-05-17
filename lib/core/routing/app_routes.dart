@@ -1,9 +1,9 @@
-import 'package:chatgpt/screens/enter_code_screen.dart';
-import 'package:chatgpt/screens/enter_name_screen.dart';
-import 'package:chatgpt/screens/login_screen.dart';
-import 'package:chatgpt/screens/phone_number_verification.dart';
-import 'package:chatgpt/screens/sign_up_screen.dart';
-import 'package:chatgpt/screens/welcome_screen.dart';
+import 'package:chatgpt/feature/auth/presentation/screens/enter_code_screen.dart';
+import 'package:chatgpt/feature/auth/presentation/screens/enter_name_screen.dart';
+import 'package:chatgpt/feature/auth/presentation/screens/login_screen.dart';
+import 'package:chatgpt/feature/auth/presentation/screens/phone_number_verification.dart';
+import 'package:chatgpt/feature/auth/presentation/screens/sign_up_screen.dart';
+import 'package:chatgpt/feature/auth/presentation/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chatgpt/core/routing/routes.dart';
 // Import your screen widgets

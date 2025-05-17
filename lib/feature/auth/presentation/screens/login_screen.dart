@@ -12,8 +12,8 @@ import 'package:chatgpt/core/widgets/social_media_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +24,10 @@ class SignUpScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AuthHeader(title: 'Create your account'),
+              AuthHeader(title: 'Welcome Back!'),
               verticalSpacing(16),
               Text(
-                'Please note that phone verification is required for sign up. Your number will only be used to verify your identity for security purpose.',
+                'Log in to continue exploring, managing your account, and accessing personalized features.',
                 style: AppTextstyles.font12Regular,
                 textAlign: TextAlign.center,
               ),
@@ -36,14 +36,13 @@ class SignUpScreen extends StatelessWidget {
               CustomTextFormField(
                 hintText: 'Email address',
                 obscureText: false,
-                onTap: () {},
               ),
               verticalSpacing(24),
 
               CustomTextFormField(
                 hintText: 'Password',
                 obscureText: false,
-                onTap: () {},
+
                 suffixIcon: IconButton(
                   icon: SvgPicture.asset(
                     Assets.assetsSvgsHideIcon,
@@ -69,8 +68,8 @@ class SignUpScreen extends StatelessWidget {
               ),
               verticalSpacing(16),
               AlreadyHaveAnAccountOrCreateAccount(
-                title: 'Already have an account',
-                navigationText: 'Log in',
+                title: 'You don\'t have an account?',
+                navigationText: 'Signup',
               ),
               verticalSpacing(36),
               CustomDivider(),
