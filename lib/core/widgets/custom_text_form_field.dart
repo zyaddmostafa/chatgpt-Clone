@@ -5,20 +5,27 @@ import 'package:flutter/material.dart';
 class CustomTextFormField extends StatelessWidget {
   final String hintText;
   final Widget? suffixIcon;
-  final bool obscureText;
+  final bool? obscureText;
   final VoidCallback onTap;
+  final TextInputType? keyboardType;
+  final EdgeInsetsGeometry? contentPadding;
   const CustomTextFormField({
     super.key,
     required this.hintText,
     this.suffixIcon,
-    required this.obscureText,
+    this.obscureText,
     required this.onTap,
+    this.keyboardType,
+    this.contentPadding,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      keyboardType: keyboardType,
       decoration: InputDecoration(
+        contentPadding: contentPadding,
+
         hintText: hintText,
         hintStyle: AppTextstyles.font16Regular,
         border: OutlineInputBorder(
@@ -40,7 +47,7 @@ class CustomTextFormField extends StatelessWidget {
         ),
         suffixIcon: suffixIcon,
       ),
-      obscureText: obscureText,
+      obscureText: obscureText ?? false,
     );
   }
 }

@@ -41,7 +41,10 @@ class WelcomeScreen extends StatelessWidget {
               style: AppTextstyles.font14Regular,
             ),
             verticalSpacing(36),
-            CustomAppButton(text: 'LOG IN'),
+            CustomAppButton(
+              text: 'LOG IN',
+              onPressed: () => context.pushReplacementNamed(Routes.loginScreen),
+            ),
             verticalSpacing(24),
             CustomAppButton(
               text: 'SIGN UP',
