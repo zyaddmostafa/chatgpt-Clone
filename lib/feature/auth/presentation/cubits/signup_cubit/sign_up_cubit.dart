@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:chatgpt/feature/auth/data/models/sign_up_request_body.dart';
 import 'package:chatgpt/feature/auth/data/repos/sign_up_repo_impl.dart';
 import 'package:chatgpt/feature/auth/presentation/cubits/signup_cubit/sign_up_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,10 +16,13 @@ class SignUpCubit extends Cubit<SignUpState> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController dialCodeController = TextEditingController();
+  final TextEditingController verificationCodeController =
+      TextEditingController();
   final GlobalKey<FormState> signUpFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> phoneVerificationFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> enterCodeFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> enterNameFormKey = GlobalKey<FormState>();
+  String? _verificationId;
 
   Future<void> signUpUsingEmailAndPassword() async {
     emit(SignUpLoading());
@@ -40,18 +44,96 @@ class SignUpCubit extends Cubit<SignUpState> {
         ),
       );
       emit(SignUpSuccess());
+      // add user data to firestore
+      await saveUserDataToFirestore('signUp with email and password');
+      // Clear the controllers after successful sign-up
       emailController.clear();
       passwordController.clear();
       phoneNumberController.clear();
       firstNameController.clear();
       lastNameController.clear();
     } catch (e) {
+      // Clear the controllers in case of an error
       emailController.clear();
       passwordController.clear();
       phoneNumberController.clear();
       firstNameController.clear();
       lastNameController.clear();
       emit(SignUpError(e.toString()));
+    }
+  }
+
+  // Add these methods to your SignUpCubit class
+
+  Future<void> verifyPhoneNumber() async {
+    emit(SignUpPhoneVerificationLoading());
+    try {
+      // Format the phone number with country code
+      final phoneNumber =
+          "${dialCodeController.text}${phoneNumberController.text}";
+
+      await signUpRepoImpl.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        onCodeSent: (String verificationId) {
+          _verificationId = verificationId;
+          emit(SignUpPhoneVerificationCodeSent(verificationId));
+        },
+        onVerificationFailed: (FirebaseAuthException e) {
+          emit(
+            SignUpPhoneVerificationError(
+              e.message ?? 'Phone verification failed',
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(SignUpError(e.toString()));
+    }
+  }
+
+  Future<void> verifyOtpCode(String smsCode) async {
+    if (_verificationId == null) {
+      emit(
+        SignUpPhoneVerificationError(
+          'Please request a verification code first',
+        ),
+      );
+      return;
+    }
+
+    emit(SignUpPhoneVerificationLoading());
+    try {
+      await signUpRepoImpl.verifyOtpAndSignIn(
+        verificationId: _verificationId!,
+        smsCode: smsCode,
+      );
+      emit(SignUpPhoneVerificationSuccess());
+      signUpUsingEmailAndPassword();
+      // Clear the controllers after successful verification
+    } catch (e) {
+      emit(SignUpPhoneVerificationError(e.toString()));
+    }
+  }
+
+  // add user data to firestore
+
+  Future<void> saveUserDataToFirestore(String provider) async {
+    emit(AddUserDataToFirestoreLoading());
+    try {
+      await signUpRepoImpl.saveUserDataToFirestore(
+        signUpRequestBody: SignUpRequestBody(
+          email: emailController.text,
+          password: passwordController.text,
+          phoneNumber:
+              '${dialCodeController.text}${phoneNumberController.text}',
+          firstName: firstNameController.text,
+          lastName: lastNameController.text,
+          provider: provider,
+        ),
+      );
+      emit(AddUserDataToFirestoreSuccess());
+    } catch (e) {
+      emit(AddUserDataToFirestoreError(e.toString()));
     }
   }
 }

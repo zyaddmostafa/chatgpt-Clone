@@ -9,6 +9,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final EdgeInsetsGeometry? contentPadding;
+  final ValueChanged<String>? onSaved;
   const CustomTextFormField({
     super.key,
     required this.hintText,
@@ -17,6 +18,7 @@ class CustomTextFormField extends StatelessWidget {
     this.controller,
     this.keyboardType,
     this.contentPadding,
+    this.onSaved,
   });
 
   @override
@@ -30,7 +32,7 @@ class CustomTextFormField extends StatelessWidget {
         }
         return null;
       },
-
+      onSaved: (newValue) => onSaved!(newValue!),
       decoration: InputDecoration(
         contentPadding: contentPadding,
 

@@ -13,7 +13,10 @@ Future<void> setupGetIt() async {
     () => FirebaseStoreService(),
   );
   getIt.registerLazySingleton<SignUpRepoImpl>(
-    () => SignUpRepoImpl(getIt<FirebaseAuthService>()),
+    () => SignUpRepoImpl(
+      getIt<FirebaseAuthService>(),
+      getIt<FirebaseStoreService>(),
+    ),
   );
 
   getIt.registerLazySingleton<SignUpCubit>(

@@ -157,9 +157,9 @@ class FirebaseAuthService {
       );
 
       // Always save/update user data (merge handles existing users)
-      if (userCredential.user != null) {
-        await _saveUserDataToFirestore(userCredential.user!, 'google');
-      }
+      // if (userCredential.user != null) {
+      //   await _saveUserDataToFirestore(userCredential.user!, 'google');
+      // }
 
       return userCredential;
     } catch (e) {
@@ -168,22 +168,118 @@ class FirebaseAuthService {
     }
   }
 
-  Future<void> _saveUserDataToFirestore(User user, String provider) async {
+  // Future<void> _saveUserDataToFirestore(User user, String provider) async {
+  //   try {
+  //     await _firestore.collection('users').doc(user.uid).set(
+  //       {
+  //         'uid': user.uid,
+  //         'email': user.email,
+  //         'displayName': user.displayName,
+  //         'photoURL': user.photoURL,
+  //         'createdAt': FieldValue.serverTimestamp(),
+  //         'provider': provider,
+  //         // Add any other fields you want to store
+  //       },
+  //       SetOptions(merge: true),
+  //     ); // Use merge to avoid overwriting existing data
+  //   } catch (e) {
+  //     print('Error saving user data: $e');
+  //   }
+  // }
+
+  // verify phone number
+  // Update your verifyPhoneNumber method
+
+  Future<String> verifyPhoneNumber({
+    required String phoneNumber,
+    required void Function(String verificationId) onCodeSent,
+    required void Function(FirebaseAuthException) onVerificationFailed,
+  }) async {
     try {
-      await _firestore.collection('users').doc(user.uid).set(
-        {
-          'uid': user.uid,
-          'email': user.email,
-          'displayName': user.displayName,
-          'photoURL': user.photoURL,
-          'createdAt': FieldValue.serverTimestamp(),
-          'provider': provider,
-          // Add any other fields you want to store
+      String verificationId = '';
+
+      await _firebaseAuth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          // Auto-verification on Android (when possible)
+          log('Auto-verification completed');
+          await _firebaseAuth.signInWithCredential(credential);
         },
-        SetOptions(merge: true),
-      ); // Use merge to avoid overwriting existing data
+        verificationFailed: (FirebaseAuthException e) {
+          log('Phone verification failed: ${e.code} - ${e.message}');
+          onVerificationFailed(e);
+        },
+        codeSent: (String verId, int? resendToken) {
+          log('Verification code sent to $phoneNumber');
+          verificationId = verId;
+          onCodeSent(verId);
+        },
+        codeAutoRetrievalTimeout: (String verId) {
+          verificationId = verId;
+        },
+        timeout: const Duration(seconds: 60),
+        // For web applications, use the following to handle reCAPTCHA
+        // recaptchaVerifier: RecaptchaVerifier(
+        //   container: 'recaptcha',
+        //   size: RecaptchaVerifierSize.compact,
+        //   theme: RecaptchaVerifierTheme.light,
+        // ),
+      );
+
+      return verificationId;
     } catch (e) {
-      print('Error saving user data: $e');
+      log('FirebaseAuthService: verifyPhoneNumber: General exception: $e');
+      throw ErrorMessage(
+        message: 'Something went wrong with phone verification: $e',
+      );
+    }
+  }
+
+  // Verifies the SMS code and signs in the user
+  Future<UserCredential> verifyOtpAndSignIn({
+    required String verificationId,
+    required String smsCode,
+  }) async {
+    try {
+      // Create a PhoneAuthCredential with the code
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: verificationId,
+        smsCode: smsCode,
+      );
+
+      // Sign in with the credential
+      UserCredential userCredential = await _firebaseAuth.signInWithCredential(
+        credential,
+      );
+
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      log('FirebaseAuthService: verifyOtpAndSignIn: ${e.code} - ${e.message}');
+      switch (e.code) {
+        case 'invalid-verification-code':
+          throw const ErrorMessage(
+            message: 'The verification code is invalid. Please try again.',
+          );
+        case 'invalid-verification-id':
+          throw const ErrorMessage(
+            message:
+                'The verification ID is invalid. Please request a new code.',
+          );
+        case 'session-expired':
+          throw const ErrorMessage(
+            message: 'The SMS code has expired. Please request a new code.',
+          );
+        default:
+          throw ErrorMessage(
+            message:
+                'Verification error: ${e.message ?? "Something went wrong."}',
+          );
+      }
+    } catch (e) {
+      log('FirebaseAuthService: verifyOtpAndSignIn: General exception: $e');
+      throw const ErrorMessage(
+        message: 'Something went wrong during verification!',
+      );
     }
   }
 

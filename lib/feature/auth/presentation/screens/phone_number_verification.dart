@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chatgpt/core/routing/routes.dart';
 import 'package:chatgpt/core/utils/extention.dart';
 import 'package:chatgpt/core/utils/spacing.dart';
@@ -76,7 +78,28 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
                       .phoneVerificationFormKey
                       .currentState!
                       .validate()) {
-                    context.read<SignUpCubit>().signUpUsingEmailAndPassword();
+                    // Set the dial code from selected country
+                    context.read<SignUpCubit>().dialCodeController.text =
+                        selectedCountry.dialCode;
+
+                    // Format the phone number properly (remove spaces, ensure + sign)
+                    final phoneNumber =
+                        "${selectedCountry.dialCode}${context.read<SignUpCubit>().phoneNumberController.text.trim()}";
+
+                    log('Verifying phone number: $phoneNumber');
+
+                    // Update your cubit to store the formatted phone number
+                    context.read<SignUpCubit>().phoneNumberController.text =
+                        context
+                            .read<SignUpCubit>()
+                            .phoneNumberController
+                            .text
+                            .trim();
+
+                    // Verify phone number
+                    context.read<SignUpCubit>().verifyPhoneNumber();
+
+                    // Navigate to enter code screen
                     context.pushReplacementNamed(Routes.enterCodeScreen);
                   }
                 },
@@ -123,8 +146,10 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
                         setState(() {
                           selectedCountry = country;
                         });
-                        context.read<SignUpCubit>().dialCodeController.text =
-                            country.dialCode;
+                        log(
+                          'Selected country: ${country.name} (${country.dialCode})',
+                        );
+
                         Navigator.pop(context);
                       },
                     );
