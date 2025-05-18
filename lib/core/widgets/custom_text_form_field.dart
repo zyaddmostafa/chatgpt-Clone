@@ -10,6 +10,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputType? keyboardType;
   final EdgeInsetsGeometry? contentPadding;
   final ValueChanged<String>? onSaved;
+  final Function(String?) validator;
   const CustomTextFormField({
     super.key,
     required this.hintText,
@@ -19,6 +20,7 @@ class CustomTextFormField extends StatelessWidget {
     this.keyboardType,
     this.contentPadding,
     this.onSaved,
+    required this.validator,
   });
 
   @override
@@ -27,10 +29,7 @@ class CustomTextFormField extends StatelessWidget {
       keyboardType: keyboardType,
       controller: controller,
       validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter your $hintText';
-        }
-        return null;
+        return validator(value);
       },
       onSaved: (newValue) => onSaved!(newValue!),
       decoration: InputDecoration(
