@@ -19,14 +19,10 @@ class PhoneNumberVerificationForm extends StatelessWidget {
             keyboardType: TextInputType.phone,
             validator: (value) {
               if (value!.isEmpty) {
-                return SnackBar(
-                  content: Text('Please enter your phone number'),
-                );
+                return 'Please enter your phone number';
               }
               if (!AppRegex.isPhoneNumberValid(value)) {
-                return SnackBar(
-                  content: Text('Please enter a valid phone number'),
-                );
+                return 'Please enter a valid phone number';
               }
               return null;
             },

@@ -1,5 +1,6 @@
 import 'package:chatgpt/core/utils/app_regex.dart';
 import 'package:chatgpt/core/utils/assets.dart';
+import 'package:chatgpt/core/utils/snack_bar.dart';
 import 'package:chatgpt/core/utils/spacing.dart';
 import 'package:chatgpt/core/widgets/custom_text_form_field.dart';
 import 'package:chatgpt/feature/auth/presentation/cubits/signup_cubit/sign_up_cubit.dart';
@@ -8,9 +9,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
-class SignUpForm extends StatelessWidget {
+class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
 
+  @override
+  State<SignUpForm> createState() => _SignUpFormState();
+}
+
+class _SignUpFormState extends State<SignUpForm> {
+  bool isObscureText = true;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -23,37 +30,27 @@ class SignUpForm extends StatelessWidget {
             controller: context.read<SignUpCubit>().emailController,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return SnackBar(
-                  content: Text('Please enter your email address'),
-                );
+                return 'Please enter your email address';
               }
               if (!AppRegex.isEmailValid(value)) {
-                return SnackBar(
-                  content: Text('Please enter a valid email address'),
-                );
+                return 'Please enter a valid email address';
               }
             },
           ),
           verticalSpacing(24),
           CustomTextFormField(
             hintText: 'Password',
-            obscureText: false,
+            obscureText: isObscureText,
             controller: context.read<SignUpCubit>().passwordController,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return SnackBar(content: Text('Please enter your password'));
+                return 'Please enter your password';
               }
               if (value.length < 6) {
-                return SnackBar(
-                  content: Text('Password must be at least 8 characters long'),
-                );
+                return 'Password must be at least 6 characters long';
               }
               if (!AppRegex.isPasswordValid(value)) {
-                return SnackBar(
-                  content: Text(
-                    'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
-                  ),
-                );
+                return 'Password must contain at least one uppercase letter,\n one lowercase letter, one number, \n and one special character';
               }
             },
             suffixIcon: IconButton(
@@ -67,7 +64,9 @@ class SignUpForm extends StatelessWidget {
                 height: 20,
               ),
               onPressed: () {
-                // Add your toggle visibility logic here
+                setState(() {
+                  isObscureText = !isObscureText;
+                });
               },
             ),
           ),

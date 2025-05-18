@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:chatgpt/core/utils/app_regex.dart';
 import 'package:chatgpt/core/widgets/error_message.dart';
 import 'package:chatgpt/feature/auth/data/models/login_request_body.dart';
 import 'package:chatgpt/feature/auth/data/models/sign_up_request_body.dart';
@@ -30,42 +31,7 @@ class FirebaseAuthService {
       log(
         'FirebaseAuthService: signUpWithEmailAndPassword: ${e.code} - ${e.message}',
       );
-      switch (e.code) {
-        case 'weak-password':
-          throw const ErrorMessage(
-            message: 'The password provided is too weak.',
-          );
-        case 'email-already-in-use':
-          throw const ErrorMessage(
-            message: 'The account already exists for that email.',
-          );
-        case 'invalid-email':
-          throw const ErrorMessage(message: 'Invalid email address.');
-        case 'operation-not-allowed':
-          throw const ErrorMessage(
-            message: 'Email/password sign-up is not enabled.',
-          );
-        case 'network-request-failed':
-          throw const ErrorMessage(
-            message: 'A network error occurred. Please check your connection.',
-          );
-        case 'too-many-requests':
-          throw const ErrorMessage(
-            message: 'Too many requests. Please try again later.',
-          );
-        case 'admin-restricted-operation':
-          throw const ErrorMessage(
-            message: 'This operation is restricted to administrators only.',
-          );
-        case 'invalid-credential':
-          throw const ErrorMessage(
-            message: 'The credential data is malformed or has expired.',
-          );
-        default:
-          throw ErrorMessage(
-            message: 'Sign-up error: ${e.message ?? "Something went wrong."}',
-          );
-      }
+      throw ErrorMessage(message: AppRegex.getFirebaseAuthErrorMessage(e.code));
     } catch (e) {
       log(
         'FirebaseAuthService: signUpWithEmailAndPassword: General exception: $e',
@@ -85,50 +51,7 @@ class FirebaseAuthService {
       );
     } on FirebaseAuthException catch (e) {
       log('Firebase login error: ${e.code} - ${e.message}');
-      switch (e.code) {
-        case 'user-not-found':
-          throw const ErrorMessage(message: 'No user found for that email.');
-        case 'wrong-password':
-          throw const ErrorMessage(
-            message: 'Wrong password provided for that user.',
-          );
-        case 'invalid-email':
-          throw const ErrorMessage(message: 'Invalid email address.');
-        case 'user-disabled':
-          throw const ErrorMessage(
-            message: 'This user account has been disabled.',
-          );
-        case 'too-many-requests':
-          throw const ErrorMessage(
-            message: 'Too many login attempts. Please try again later.',
-          );
-        case 'operation-not-allowed':
-          throw const ErrorMessage(
-            message: 'Email/password sign-in is not enabled.',
-          );
-        case 'account-exists-with-different-credential':
-          throw const ErrorMessage(
-            message:
-                'An account already exists with the same email address but different sign-in credentials.',
-          );
-        case 'invalid-credential':
-          throw const ErrorMessage(
-            message: 'The credential data is malformed or has expired.',
-          );
-        case 'network-request-failed':
-          throw const ErrorMessage(
-            message: 'A network error occurred. Please check your connection.',
-          );
-        case 'auth/invalid-verification-code':
-          throw const ErrorMessage(
-            message: 'The verification code is invalid.',
-          );
-        default:
-          throw ErrorMessage(
-            message:
-                'Authentication error: ${e.message ?? "Something went wrong."}',
-          );
-      }
+      throw ErrorMessage(message: AppRegex.getFirebaseAuthErrorMessage(e.code));
     }
   }
 
@@ -167,26 +90,6 @@ class FirebaseAuthService {
       rethrow;
     }
   }
-
-  // Future<void> _saveUserDataToFirestore(User user, String provider) async {
-  //   try {
-  //     await _firestore.collection('users').doc(user.uid).set(
-  //       {
-  //         'uid': user.uid,
-  //         'email': user.email,
-  //         'displayName': user.displayName,
-  //         'photoURL': user.photoURL,
-  //         'createdAt': FieldValue.serverTimestamp(),
-  //         'provider': provider,
-  //         // Add any other fields you want to store
-  //       },
-  //       SetOptions(merge: true),
-  //     ); // Use merge to avoid overwriting existing data
-  //   } catch (e) {
-  //     print('Error saving user data: $e');
-  //   }
-  // }
-
   // verify phone number
   // Update your verifyPhoneNumber method
 
@@ -255,26 +158,7 @@ class FirebaseAuthService {
       return userCredential;
     } on FirebaseAuthException catch (e) {
       log('FirebaseAuthService: verifyOtpAndSignIn: ${e.code} - ${e.message}');
-      switch (e.code) {
-        case 'invalid-verification-code':
-          throw const ErrorMessage(
-            message: 'The verification code is invalid. Please try again.',
-          );
-        case 'invalid-verification-id':
-          throw const ErrorMessage(
-            message:
-                'The verification ID is invalid. Please request a new code.',
-          );
-        case 'session-expired':
-          throw const ErrorMessage(
-            message: 'The SMS code has expired. Please request a new code.',
-          );
-        default:
-          throw ErrorMessage(
-            message:
-                'Verification error: ${e.message ?? "Something went wrong."}',
-          );
-      }
+      throw ErrorMessage(message: AppRegex.getFirebaseAuthErrorMessage(e.code));
     } catch (e) {
       log('FirebaseAuthService: verifyOtpAndSignIn: General exception: $e');
       throw const ErrorMessage(

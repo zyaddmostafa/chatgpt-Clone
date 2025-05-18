@@ -4,6 +4,6 @@ class ErrorMessage {
 
   @override
   String toString() {
-    return 'ErrorMessage: $message';
+    return ' $message';
   }
 }

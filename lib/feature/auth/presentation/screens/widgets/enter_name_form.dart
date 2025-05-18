@@ -18,9 +18,8 @@ class EnterNameForm extends StatelessWidget {
             controller: context.read<SignUpCubit>().firstNameController,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return SnackBar(content: Text('Please enter your first name'));
+                return 'Please enter your first name';
               }
-              return null;
             },
           ),
           verticalSpacing(24),
@@ -29,9 +28,8 @@ class EnterNameForm extends StatelessWidget {
             controller: context.read<SignUpCubit>().lastNameController,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return SnackBar(content: Text('Please enter your last name'));
+                return 'Please enter your last name';
               }
-              return null;
             },
           ),
         ],

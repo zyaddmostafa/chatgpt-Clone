@@ -28,6 +28,7 @@ class CustomTextFormField extends StatelessWidget {
     return TextFormField(
       keyboardType: keyboardType,
       controller: controller,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (value) {
         return validator(value);
       },
