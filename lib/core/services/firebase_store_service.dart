@@ -11,7 +11,7 @@ class FirebaseStoreService {
       await firestore
           .collection(ApiConstants.userCollection)
           .doc(user?.uid)
-          .set(userData);
+          .set(userData, SetOptions(merge: true));
     } else {
       await firestore.collection(ApiConstants.userCollection).add(userData);
     }

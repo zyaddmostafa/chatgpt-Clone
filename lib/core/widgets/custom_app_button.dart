@@ -16,6 +16,7 @@ class CustomAppButton extends StatelessWidget {
   final Color? textColor;
   final VoidCallback? onPressed;
   final String text;
+
   @override
   Widget build(BuildContext context) {
     return Padding(

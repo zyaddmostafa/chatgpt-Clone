@@ -9,7 +9,9 @@ import 'package:chatgpt/core/widgets/custom_app_button.dart';
 import 'package:chatgpt/core/widgets/custom_divider.dart';
 import 'package:chatgpt/core/widgets/custom_text_form_field.dart';
 import 'package:chatgpt/core/widgets/social_media_auth.dart';
+import 'package:chatgpt/feature/auth/presentation/cubits/login_cubit/login_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -33,39 +35,10 @@ class LoginScreen extends StatelessWidget {
               ),
               verticalSpacing(32),
 
-              CustomTextFormField(
-                hintText: 'Email address',
-                obscureText: false,
-              ),
-              verticalSpacing(24),
+              LoginForm(),
 
-              CustomTextFormField(
-                hintText: 'Password',
-                obscureText: false,
-
-                suffixIcon: IconButton(
-                  icon: SvgPicture.asset(
-                    Assets.assetsSvgsHideIcon,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.black,
-                      BlendMode.srcIn,
-                    ),
-                    width: 20,
-                    height: 20,
-                  ),
-                  onPressed: () {
-                    // Add your toggle visibility logic here
-                  },
-                ),
-              ),
               verticalSpacing(24),
-              CustomAppButton(
-                text: 'Continue',
-                onPressed: () {
-                  // Add your sign-up logic here
-                  context.pushReplacementNamed(Routes.enterNameScreen);
-                },
-              ),
+              LoginButtonBlocConsumer(),
               verticalSpacing(16),
               AlreadyHaveAnAccountOrCreateAccount(
                 title: 'You don\'t have an account?',
@@ -78,6 +51,81 @@ class LoginScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class LoginButtonBlocConsumer extends StatelessWidget {
+  const LoginButtonBlocConsumer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<LoginCubit, LoginState>(
+      listenWhen: (previous, current) => current is LoginLoading,
+      listener: (context, state) {
+        // Show loading indicator
+        context.pushReplacementNamed(Routes.loginLoadingScreen);
+      },
+      child: CustomAppButton(
+        text: 'Continue',
+        onPressed: () {
+          _loginValidation(context);
+        },
+      ),
+    );
+  }
+}
+
+void _loginValidation(BuildContext context) {
+  if (context.read<LoginCubit>().loginFormKey.currentState!.validate()) {
+    context.read<LoginCubit>().loginUsingEmailAndPassword();
+  }
+}
+
+class LoginForm extends StatefulWidget {
+  const LoginForm({super.key});
+
+  @override
+  State<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+  bool isObscureText = true;
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: context.read<LoginCubit>().loginFormKey,
+      child: Column(
+        children: [
+          CustomTextFormField(
+            hintText: 'Email address',
+            obscureText: false,
+            controller: context.read<LoginCubit>().emailController,
+          ),
+          verticalSpacing(24),
+          CustomTextFormField(
+            hintText: 'Password',
+            obscureText: isObscureText,
+            controller: context.read<LoginCubit>().passwordController,
+            suffixIcon: IconButton(
+              icon: SvgPicture.asset(
+                Assets.assetsSvgsHideIcon,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+                width: 20,
+                height: 20,
+              ),
+              onPressed: () {
+                setState(() {
+                  isObscureText = !isObscureText;
+                });
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

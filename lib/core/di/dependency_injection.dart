@@ -1,6 +1,8 @@
 import 'package:chatgpt/core/services/firebase_auth_service.dart';
 import 'package:chatgpt/core/services/firebase_store_service.dart';
+import 'package:chatgpt/feature/auth/data/repos/login_repo_impl.dart';
 import 'package:chatgpt/feature/auth/data/repos/sign_up_repo_impl.dart';
+import 'package:chatgpt/feature/auth/presentation/cubits/login_cubit/login_cubit.dart';
 import 'package:chatgpt/feature/auth/presentation/cubits/signup_cubit/sign_up_cubit.dart';
 import 'package:get_it/get_it.dart';
 
@@ -21,5 +23,13 @@ Future<void> setupGetIt() async {
 
   getIt.registerLazySingleton<SignUpCubit>(
     () => SignUpCubit(getIt<SignUpRepoImpl>()),
+  );
+
+  getIt.registerLazySingleton<LoginRepoImpl>(
+    () => LoginRepoImpl(getIt<FirebaseAuthService>()),
+  );
+
+  getIt.registerLazySingleton<LoginCubit>(
+    () => LoginCubit(getIt<LoginRepoImpl>()),
   );
 }

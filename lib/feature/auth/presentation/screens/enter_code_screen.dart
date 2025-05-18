@@ -1,11 +1,14 @@
 import 'dart:developer';
 
+import 'package:chatgpt/core/routing/routes.dart';
 import 'package:chatgpt/core/theme/app_textstyles.dart';
+import 'package:chatgpt/core/utils/extention.dart';
 import 'package:chatgpt/core/utils/spacing.dart';
 import 'package:chatgpt/core/widgets/auth_header.dart';
 import 'package:chatgpt/core/widgets/custom_app_button.dart';
 import 'package:chatgpt/core/widgets/custom_text_form_field.dart';
 import 'package:chatgpt/feature/auth/presentation/cubits/signup_cubit/sign_up_cubit.dart';
+import 'package:chatgpt/feature/auth/presentation/cubits/signup_cubit/sign_up_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -44,25 +47,19 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
               ),
               verticalSpacing(16),
 
-              CustomAppButton(
-                text: 'Verify',
-                onPressed: () {
-                  if (context
-                      .read<SignUpCubit>()
-                      .enterCodeFormKey
-                      .currentState!
-                      .validate()) {
-                    log(
-                      'Verification code:  ${context.read<SignUpCubit>().verificationCodeController.text}',
-                    );
-                    context.read<SignUpCubit>().verifyOtpCode(
-                      context
-                          .read<SignUpCubit>()
-                          .verificationCodeController
-                          .text,
-                    );
-                  }
+              BlocListener<SignUpCubit, SignUpState>(
+                listenWhen:
+                    (previous, current) =>
+                        current is SignUpPhoneVerificationLoading,
+                listener: (context, state) {
+                  context.pushReplacementNamed(Routes.signUpLoadingScreen);
                 },
+                child: CustomAppButton(
+                  text: 'Verify',
+                  onPressed: () {
+                    _codeVerificationValidation(context);
+                  },
+                ),
               ),
               TextButton(
                 onPressed: () {},
@@ -73,5 +70,16 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
         ),
       ),
     );
+  }
+
+  void _codeVerificationValidation(BuildContext context) {
+    if (context.read<SignUpCubit>().enterCodeFormKey.currentState!.validate()) {
+      log(
+        'Verification code:  ${context.read<SignUpCubit>().verificationCodeController.text}',
+      );
+      context.read<SignUpCubit>().verifyOtpCode(
+        context.read<SignUpCubit>().verificationCodeController.text,
+      );
+    }
   }
 }
