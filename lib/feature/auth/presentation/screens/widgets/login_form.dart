@@ -1,12 +1,11 @@
 import 'package:chatgpt/core/utils/app_regex.dart';
 import 'package:chatgpt/core/utils/assets.dart';
-import 'package:chatgpt/core/utils/snack_bar.dart';
 import 'package:chatgpt/core/utils/spacing.dart';
 import 'package:chatgpt/core/widgets/custom_text_form_field.dart';
 import 'package:chatgpt/feature/auth/presentation/cubits/login_cubit/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart' show SvgPicture;
+import 'package:flutter_svg/svg.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});

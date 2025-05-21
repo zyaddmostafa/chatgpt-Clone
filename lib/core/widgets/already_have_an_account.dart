@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 
 class AlreadyHaveAnAccountOrCreateAccount extends StatelessWidget {
   final String title, navigationText;
+  final void Function()? onTap;
   const AlreadyHaveAnAccountOrCreateAccount({
     super.key,
     required this.title,
     required this.navigationText,
+    this.onTap,
   });
 
   @override
@@ -19,9 +21,7 @@ class AlreadyHaveAnAccountOrCreateAccount extends StatelessWidget {
         Text(title, style: AppTextstyles.font14Medium),
         horizontalSpacing(4),
         InkWell(
-          onTap: () {
-            // Add your login navigation logic here
-          },
+          onTap: onTap,
           child: Text(
             navigationText,
             style: AppTextstyles.font14Medium.copyWith(

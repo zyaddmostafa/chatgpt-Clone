@@ -2,24 +2,26 @@ import 'dart:developer';
 
 import 'package:chatgpt/core/routing/routes.dart';
 import 'package:chatgpt/core/utils/extention.dart';
+import 'package:chatgpt/core/utils/snack_bar.dart';
 import 'package:chatgpt/core/utils/spacing.dart';
 import 'package:chatgpt/core/widgets/auth_header.dart';
 import 'package:chatgpt/core/widgets/custom_app_button.dart';
 import 'package:chatgpt/feature/auth/data/models/country_model.dart';
 import 'package:chatgpt/feature/auth/presentation/cubits/signup_cubit/sign_up_cubit.dart';
+import 'package:chatgpt/feature/auth/presentation/cubits/signup_cubit/sign_up_state.dart';
 import 'package:chatgpt/feature/auth/presentation/screens/widgets/phone_verification_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class PhoneNumberVerification extends StatefulWidget {
-  const PhoneNumberVerification({super.key});
+class PhoneVerificationScreen extends StatefulWidget {
+  const PhoneVerificationScreen({super.key});
 
   @override
-  State<PhoneNumberVerification> createState() =>
-      _PhoneNumberVerificationState();
+  State<PhoneVerificationScreen> createState() =>
+      _PhoneVerificationScreenState();
 }
 
-class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
+class _PhoneVerificationScreenState extends State<PhoneVerificationScreen> {
   // Default country - you can change this to your preferred default
   Country selectedCountry = countries.first;
 
@@ -69,7 +71,7 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
               ),
 
               verticalSpacing(12),
-              PhoneNumberVerificationForm(),
+              PhoneNumberVerificationForm(dialCode: selectedCountry.dialCode),
               verticalSpacing(24),
               CustomAppButton(
                 text: 'Send Code',
@@ -77,6 +79,7 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
                   _phoneNumberValidation(context);
                 },
               ),
+              PhoneVerficationScreenBlocListener(),
             ],
           ),
         ),
@@ -108,7 +111,6 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
       context.read<SignUpCubit>().verifyPhoneNumber();
 
       // Navigate to enter code screen
-      context.pushReplacementNamed(Routes.enterCodeScreen);
     }
   }
 
@@ -161,6 +163,39 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
           ),
         );
       },
+    );
+  }
+}
+
+class PhoneVerficationScreenBlocListener extends StatelessWidget {
+  const PhoneVerficationScreenBlocListener({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<SignUpCubit, SignUpState>(
+      listenWhen:
+          (previous, current) =>
+              current is SignUpPhoneVerificationLoading ||
+              current is SignUpPhoneVerificationSuccess ||
+              current is SignUpPhoneVerificationError,
+
+      listener: (context, state) {
+        if (state is SignUpPhoneVerificationError) {
+          // Show error message
+          AppSnackBar.showError(
+            context: context,
+            message: '${state.errorMessage} or use another number',
+            duration: const Duration(seconds: 3),
+          );
+          Future.delayed(const Duration(seconds: 4), () {
+            context.pushReplacementNamed(Routes.loginScreen);
+          });
+        } else if (state is SignUpPhoneVerificationSuccess) {
+          // Navigate to enter code screen
+          context.pushReplacementNamed(Routes.enterCodeScreen);
+        }
+      },
+      child: SizedBox.shrink(),
     );
   }
 }

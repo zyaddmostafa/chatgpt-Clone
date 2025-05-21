@@ -24,7 +24,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   final GlobalKey<FormState> enterNameFormKey = GlobalKey<FormState>();
   String? _verificationId;
 
-  Future<void> signUpUsingEmailAndPassword() async {
+  void signUpUsingEmailAndPassword() {
     emit(SignUpLoading());
     try {
       log('email: ${emailController.text}');
@@ -33,7 +33,7 @@ class SignUpCubit extends Cubit<SignUpState> {
       log('firstName: ${firstNameController.text}');
       log('lastName: ${lastNameController.text}');
 
-      await signUpRepoImpl.signUpWithEmailAndPassword(
+      signUpRepoImpl.signUpWithEmailAndPassword(
         SignUpRequestBody(
           email: emailController.text,
           password: passwordController.text,
@@ -45,7 +45,7 @@ class SignUpCubit extends Cubit<SignUpState> {
       );
       emit(SignUpSuccess());
       // add user data to firestore
-      await saveUserDataToFirestore('signUp with email and password');
+      saveUserDataToFirestore('signUp with email and password');
       // Clear the controllers after successful sign-up
       emailController.clear();
       passwordController.clear();
@@ -65,14 +65,14 @@ class SignUpCubit extends Cubit<SignUpState> {
 
   // Add these methods to your SignUpCubit class
 
-  Future<void> verifyPhoneNumber() async {
+  void verifyPhoneNumber() async {
     emit(SignUpPhoneVerificationLoading());
     try {
       // Format the phone number with country code
       final phoneNumber =
           "${dialCodeController.text}${phoneNumberController.text}";
 
-      await signUpRepoImpl.verifyPhoneNumber(
+      signUpRepoImpl.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         onCodeSent: (String verificationId) {
           _verificationId = verificationId;
@@ -81,7 +81,8 @@ class SignUpCubit extends Cubit<SignUpState> {
         onVerificationFailed: (FirebaseAuthException e) {
           emit(
             SignUpPhoneVerificationError(
-              e.message ?? 'Phone verification failed',
+              e.message ??
+                  'Verification failed you might have already verified this number with another account',
             ),
           );
         },
@@ -103,7 +104,7 @@ class SignUpCubit extends Cubit<SignUpState> {
 
     emit(SignUpPhoneVerificationLoading());
     try {
-      await signUpRepoImpl.verifyOtpAndSignIn(
+      signUpRepoImpl.verifyOtpAndSignIn(
         verificationId: _verificationId!,
         smsCode: smsCode,
       );
@@ -114,8 +115,6 @@ class SignUpCubit extends Cubit<SignUpState> {
       emit(SignUpPhoneVerificationError(e.toString()));
     }
   }
-
-  // add user data to firestore
 
   Future<void> saveUserDataToFirestore(String provider) async {
     emit(AddUserDataToFirestoreLoading());
@@ -137,3 +136,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     }
   }
 }
+
+  // add user data to firestore
+
+  

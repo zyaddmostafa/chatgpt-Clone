@@ -3,7 +3,7 @@ class AppRegex {
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
   static const String passwordRegex =
       r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$';
-  static const String phoneNumberRegex = r'^\+\d{1,3}\d{6,14}$';
+  static const String phoneNumberRegex = r'^\+\d{1,3}\d{6,10}$';
 
   // Verification code regex - exactly 6 digits
   static const String verificationCodeRegex = r'^[0-9]{6}$';

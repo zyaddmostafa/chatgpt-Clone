@@ -1,16 +1,18 @@
 import 'dart:developer';
+import 'package:chatgpt/core/di/dependency_injection.dart';
+import 'package:chatgpt/core/services/firebase_store_service.dart';
 import 'package:chatgpt/core/utils/app_regex.dart';
 import 'package:chatgpt/core/widgets/error_message.dart';
 import 'package:chatgpt/feature/auth/data/models/login_request_body.dart';
 import 'package:chatgpt/feature/auth/data/models/sign_up_request_body.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseAuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStoreService _firebaseStoreService =
+      getIt<FirebaseStoreService>();
 
   // Get current user
   User? get currentUser => _firebaseAuth.currentUser;
@@ -98,9 +100,26 @@ class FirebaseAuthService {
     required void Function(String verificationId) onCodeSent,
     required void Function(FirebaseAuthException) onVerificationFailed,
   }) async {
+    String verificationId = '';
     try {
-      String verificationId = '';
+      // First check if this phone number is already registered
+      bool isPhoneRegistered = await _firebaseStoreService
+          .isPhoneNumberVerified(phoneNumber);
 
+      if (isPhoneRegistered) {
+        // Phone number already exists in your system
+        log('Phone number $phoneNumber is already registered');
+        onVerificationFailed(
+          FirebaseAuthException(
+            code: 'phone-number-already-exists',
+            message:
+                'This phone number is already registered. Please try logging in instead.',
+          ),
+        );
+        return '';
+      }
+
+      // If phone number is not registered, proceed with verification
       await _firebaseAuth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         verificationCompleted: (PhoneAuthCredential credential) async {
@@ -121,12 +140,6 @@ class FirebaseAuthService {
           verificationId = verId;
         },
         timeout: const Duration(seconds: 60),
-        // For web applications, use the following to handle reCAPTCHA
-        // recaptchaVerifier: RecaptchaVerifier(
-        //   container: 'recaptcha',
-        //   size: RecaptchaVerifierSize.compact,
-        //   theme: RecaptchaVerifierTheme.light,
-        // ),
       );
 
       return verificationId;
@@ -166,6 +179,8 @@ class FirebaseAuthService {
       );
     }
   }
+
+  /// Check if an email is already registered with Firebase Auth
 
   // Check if the user is logged in
   bool isLoggedIn() {

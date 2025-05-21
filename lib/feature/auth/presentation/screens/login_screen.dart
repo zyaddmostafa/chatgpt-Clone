@@ -1,4 +1,6 @@
+import 'package:chatgpt/core/routing/routes.dart';
 import 'package:chatgpt/core/theme/app_textstyles.dart';
+import 'package:chatgpt/core/utils/extention.dart';
 import 'package:chatgpt/core/utils/spacing.dart';
 import 'package:chatgpt/core/widgets/already_have_an_account.dart';
 import 'package:chatgpt/core/widgets/auth_header.dart';
@@ -38,6 +40,8 @@ class LoginScreen extends StatelessWidget {
                 AlreadyHaveAnAccountOrCreateAccount(
                   title: 'You don\'t have an account?',
                   navigationText: 'Signup',
+                  onTap:
+                      () => context.pushReplacementNamed(Routes.signupScreen),
                 ),
                 verticalSpacing(36),
                 CustomDivider(),

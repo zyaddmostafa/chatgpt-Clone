@@ -46,6 +46,7 @@ class SignUpScreen extends StatelessWidget {
                 AlreadyHaveAnAccountOrCreateAccount(
                   title: 'Already have an account',
                   navigationText: 'Log in',
+                  onTap: () => context.pushReplacementNamed(Routes.loginScreen),
                 ),
                 verticalSpacing(36),
                 CustomDivider(),
@@ -60,7 +61,9 @@ class SignUpScreen extends StatelessWidget {
   }
 
   void _signupValidation(BuildContext context) {
-    if (context.read<SignUpCubit>().signUpFormKey.currentState!.validate()) {
+    final cubit = context.read<SignUpCubit>();
+
+    if (cubit.signUpFormKey.currentState!.validate()) {
       context.pushReplacementNamed(Routes.enterNameScreen);
     }
   }

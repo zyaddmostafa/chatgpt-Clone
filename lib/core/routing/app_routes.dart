@@ -59,7 +59,7 @@ class AppRoutes {
           builder:
               (_) => BlocProvider.value(
                 value: signUpCubit,
-                child: const PhoneNumberVerification(),
+                child: const PhoneVerificationScreen(),
               ), // Create this screen
           settings: settings,
         );

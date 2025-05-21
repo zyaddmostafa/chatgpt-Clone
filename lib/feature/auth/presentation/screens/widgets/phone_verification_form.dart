@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PhoneNumberVerificationForm extends StatelessWidget {
-  const PhoneNumberVerificationForm({super.key});
-
+  const PhoneNumberVerificationForm({super.key, required this.dialCode});
+  final String dialCode;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -21,7 +21,7 @@ class PhoneNumberVerificationForm extends StatelessWidget {
               if (value!.isEmpty) {
                 return 'Please enter your phone number';
               }
-              if (!AppRegex.isPhoneNumberValid(value)) {
+              if (!AppRegex.isPhoneNumberValid('$dialCode$value')) {
                 return 'Please enter a valid phone number';
               }
               return null;
