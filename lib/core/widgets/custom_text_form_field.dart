@@ -10,7 +10,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputType? keyboardType;
   final EdgeInsetsGeometry? contentPadding;
   final ValueChanged<String>? onSaved;
-  final Function(String?) validator;
+  final Function(String?)? validator;
   const CustomTextFormField({
     super.key,
     required this.hintText,
@@ -20,7 +20,7 @@ class CustomTextFormField extends StatelessWidget {
     this.keyboardType,
     this.contentPadding,
     this.onSaved,
-    required this.validator,
+    this.validator,
   });
 
   @override
@@ -30,7 +30,7 @@ class CustomTextFormField extends StatelessWidget {
       controller: controller,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (value) {
-        return validator(value);
+        return validator!(value);
       },
       onSaved: (newValue) => onSaved!(newValue!),
       decoration: InputDecoration(

@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:chatgpt/core/routing/routes.dart';
 import 'package:chatgpt/core/utils/extention.dart';
 import 'package:chatgpt/core/utils/spacing.dart';
-import 'package:chatgpt/core/widgets/auth_header.dart';
+import 'package:chatgpt/feature/auth/presentation/screens/widgets/auth_header.dart';
 import 'package:chatgpt/core/widgets/custom_app_button.dart';
 import 'package:chatgpt/feature/auth/presentation/cubits/signup_cubit/sign_up_cubit.dart';
 import 'package:chatgpt/feature/auth/presentation/screens/widgets/enter_name_form.dart';
