@@ -10,6 +10,7 @@ import 'package:chatgpt/feature/auth/presentation/screens/sign_up_screen.dart';
 import 'package:chatgpt/feature/auth/presentation/screens/login_loading_screen.dart';
 import 'package:chatgpt/feature/auth/presentation/screens/welcome_screen.dart';
 import 'package:chatgpt/feature/home/data/apis/gemeni_service.dart';
+import 'package:chatgpt/feature/home/data/repos/home_repo_impl.dart';
 import 'package:chatgpt/feature/home/presentation/cubits/cubit/home_cubit.dart';
 import 'package:chatgpt/feature/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -78,7 +79,9 @@ class AppRoutes {
         return MaterialPageRoute(
           builder:
               (_) => BlocProvider(
-                create: (context) => HomeCubit(GeminiService()),
+                create:
+                    (context) =>
+                        HomeCubit(GeminiService(), getIt<HomeRepoImpl>()),
                 child: const HomeScreen(),
               ),
         );

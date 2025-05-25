@@ -4,8 +4,13 @@
 	<dict>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
+		<key>CFBundleDocumentTypes</key>
 		<key>CFBundleDisplayName</key>
 		<string>Chatgpt</string>
+		<key>NSSpeechRecognitionUsageDescription</key>
+		<string>We need your permission to use speech recognition.</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>We need your permission to use the microphone.</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>

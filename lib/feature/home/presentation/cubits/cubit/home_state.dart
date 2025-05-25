@@ -29,3 +29,19 @@ class HomeImagePickedState extends HomeState {
 
   HomeImagePickedState(this.image);
 }
+
+class HomeSpeechToTextErrorState extends HomeState {
+  final String error;
+
+  HomeSpeechToTextErrorState(this.error);
+}
+
+class HomeSpeechToTextLoadingState extends HomeState {}
+
+class HomeSpeechToTextSuccessState extends HomeState {
+  final String recognizedText;
+
+  HomeSpeechToTextSuccessState(this.recognizedText);
+}
+
+class HomeSpeechToTextStoppedState extends HomeState {}

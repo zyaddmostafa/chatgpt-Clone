@@ -2,6 +2,7 @@ import 'package:chatgpt/core/theme/app_color.dart';
 import 'package:chatgpt/core/theme/app_textstyles.dart';
 import 'package:chatgpt/feature/home/presentation/cubits/cubit/home_cubit.dart';
 import 'package:chatgpt/feature/home/presentation/screens/widgets/show_picked_image.dart';
+import 'package:chatgpt/feature/home/presentation/screens/widgets/voice_recording_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -67,7 +68,27 @@ class HomeFuctionalityBottomBar extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.mic, color: AppColor.greyColor),
                 onPressed: () {
-                  // Handle voice input
+                  showDialog(
+                    context: context,
+                    builder:
+                        (context) => VoiceRecordingDialog(
+                          onSpeechRecognized: (String? recognizedText) {
+                            if (recognizedText != null &&
+                                recognizedText.isNotEmpty) {
+                              // Add the recognized text to the text field
+                              cubit.promptTextEditingController.text =
+                                  recognizedText;
+
+                              // Optional: Move cursor to the end of the text
+                              cubit
+                                  .promptTextEditingController
+                                  .selection = TextSelection.fromPosition(
+                                TextPosition(offset: recognizedText.length),
+                              );
+                            }
+                          },
+                        ),
+                  );
                 },
               ),
 

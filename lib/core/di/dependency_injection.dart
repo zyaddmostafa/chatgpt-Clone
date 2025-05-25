@@ -4,6 +4,9 @@ import 'package:chatgpt/feature/auth/data/repos/login_repo_impl.dart';
 import 'package:chatgpt/feature/auth/data/repos/sign_up_repo_impl.dart';
 import 'package:chatgpt/feature/auth/presentation/cubits/login_cubit/login_cubit.dart';
 import 'package:chatgpt/feature/auth/presentation/cubits/signup_cubit/sign_up_cubit.dart';
+import 'package:chatgpt/feature/home/data/apis/gemeni_service.dart';
+import 'package:chatgpt/feature/home/data/apis/speech_to_text_service.dart';
+import 'package:chatgpt/feature/home/data/repos/home_repo_impl.dart';
 import 'package:get_it/get_it.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -31,5 +34,11 @@ Future<void> setupGetIt() async {
 
   getIt.registerLazySingleton<LoginCubit>(
     () => LoginCubit(getIt<LoginRepoImpl>()),
+  );
+
+  getIt.registerLazySingleton<SpeechToTextService>(() => SpeechToTextService());
+  getIt.registerLazySingleton<GeminiService>(() => GeminiService());
+  getIt.registerLazySingleton<HomeRepoImpl>(
+    () => HomeRepoImpl(getIt<SpeechToTextService>()),
   );
 }

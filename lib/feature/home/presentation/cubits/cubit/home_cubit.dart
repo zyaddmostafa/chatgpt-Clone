@@ -1,18 +1,22 @@
 import 'dart:io';
 import 'package:chatgpt/feature/home/data/apis/gemeni_service.dart';
 import 'package:chatgpt/feature/home/data/models/chat_message_model.dart';
+import 'package:chatgpt/feature/home/data/repos/home_repo_impl.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   final GeminiService geminiService;
-  HomeCubit(this.geminiService) : super(HomeCubitInitial());
+  final HomeRepoImpl homeRepo;
+  HomeCubit(this.geminiService, this.homeRepo) : super(HomeCubitInitial());
 
   final TextEditingController promptTextEditingController =
       TextEditingController();
   final List<ChatMessageModel> chatMessages = [];
   File? pickedImage;
+  bool isListening = false;
+  String recognizedText = '';
 
   void sendTextMessage(String message) async {
     emit(HomeCubitLoading());
@@ -91,9 +95,32 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeClearPickedImageState());
   }
 
-  // Add this method to your HomeCubit class
-  void updatePickedImage(dynamic image) {
-    pickedImage = image;
-    emit(state); // Or create a specific state for image picked
+  void startListening() async {
+    emit(HomeSpeechToTextLoadingState());
+    try {
+      if (!isListening) {
+        bool available = await homeRepo.isAvailable();
+        if (available) {
+          isListening = true;
+          await homeRepo.startListening(recognizedText).then((text) {
+            recognizedText = text ?? '';
+            emit(HomeSpeechToTextSuccessState(recognizedText));
+          });
+        }
+      }
+    } catch (e) {
+      isListening = false;
+      emit(HomeSpeechToTextErrorState("Failed to start listening: $e"));
+    }
+  }
+
+  void stopListening() async {
+    try {
+      await homeRepo.stopListening();
+      isListening = false;
+      emit(HomeSpeechToTextStoppedState());
+    } catch (e) {
+      emit(HomeSpeechToTextErrorState("Failed to stop listening: $e"));
+    }
   }
 }
