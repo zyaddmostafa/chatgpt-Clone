@@ -36,7 +36,12 @@ class HomeSpeechToTextErrorState extends HomeState {
   HomeSpeechToTextErrorState(this.error);
 }
 
-class HomeSpeechToTextLoadingState extends HomeState {}
+class HomeSpeechToTextLoadingState extends HomeState {
+  final String isRelatedTo; // "speech", "image", "text", etc.
+  final List<ChatMessageModel> chatMessages;
+
+  HomeSpeechToTextLoadingState(this.chatMessages, {this.isRelatedTo = ""});
+}
 
 class HomeSpeechToTextSuccessState extends HomeState {
   final String recognizedText;
@@ -44,4 +49,8 @@ class HomeSpeechToTextSuccessState extends HomeState {
   HomeSpeechToTextSuccessState(this.recognizedText);
 }
 
-class HomeSpeechToTextStoppedState extends HomeState {}
+class HomeSpeechToTextStoppedState extends HomeState {
+  final String recognizedText;
+
+  HomeSpeechToTextStoppedState(this.recognizedText);
+}

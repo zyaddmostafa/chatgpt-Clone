@@ -71,22 +71,25 @@ class HomeFuctionalityBottomBar extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder:
-                        (context) => VoiceRecordingDialog(
-                          onSpeechRecognized: (String? recognizedText) {
-                            if (recognizedText != null &&
-                                recognizedText.isNotEmpty) {
-                              // Add the recognized text to the text field
-                              cubit.promptTextEditingController.text =
-                                  recognizedText;
+                        (context) => BlocProvider.value(
+                          value: cubit,
+                          child: VoiceRecordingDialog(
+                            onSpeechRecognized: (String? recognizedText) {
+                              if (recognizedText != null &&
+                                  recognizedText.isNotEmpty) {
+                                // Add the recognized text to the text field
+                                cubit.promptTextEditingController.text =
+                                    recognizedText;
 
-                              // Optional: Move cursor to the end of the text
-                              cubit
-                                  .promptTextEditingController
-                                  .selection = TextSelection.fromPosition(
-                                TextPosition(offset: recognizedText.length),
-                              );
-                            }
-                          },
+                                // Optional: Move cursor to the end of the text
+                                cubit
+                                    .promptTextEditingController
+                                    .selection = TextSelection.fromPosition(
+                                  TextPosition(offset: recognizedText.length),
+                                );
+                              }
+                            },
+                          ),
                         ),
                   );
                 },

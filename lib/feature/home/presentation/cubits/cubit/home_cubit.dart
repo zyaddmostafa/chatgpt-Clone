@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:chatgpt/feature/home/data/apis/gemeni_service.dart';
 import 'package:chatgpt/feature/home/data/models/chat_message_model.dart';
@@ -95,31 +96,84 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeClearPickedImageState());
   }
 
-  void startListening() async {
-    emit(HomeSpeechToTextLoadingState());
+  Future<bool> startListening() async {
     try {
-      if (!isListening) {
-        bool available = await homeRepo.isAvailable();
-        if (available) {
-          isListening = true;
-          await homeRepo.startListening(recognizedText).then((text) {
-            recognizedText = text ?? '';
+      log('HomeCubit: Starting speech recognition');
+      if (isListening) {
+        log('HomeCubit: Already listening, stopping first');
+        await stopListening();
+      }
+
+      // Check availability first
+      bool available = await homeRepo.isAvailable();
+      if (!available) {
+        log('HomeCubit: Speech recognition not available');
+        emit(
+          HomeSpeechToTextErrorState(
+            "Speech recognition not available on this device",
+          ),
+        );
+        return false;
+      }
+
+      // Reset state
+      recognizedText = '';
+
+      // Emit loading state
+      emit(HomeSpeechToTextLoadingState(chatMessages, isRelatedTo: "speech"));
+
+      // Start listening
+      bool started = await homeRepo.startListening(
+        onResult: (text) {
+          log('HomeCubit: Speech result received: $text');
+          recognizedText = text;
+          if (text.isNotEmpty) {
             emit(HomeSpeechToTextSuccessState(recognizedText));
-          });
-        }
+          }
+        },
+      );
+
+      if (started) {
+        isListening = true;
+        log('HomeCubit: Speech recognition started successfully');
+        return true;
+      } else {
+        isListening = false;
+        log('HomeCubit: Failed to start speech recognition');
+        emit(
+          HomeSpeechToTextErrorState(
+            "Failed to start speech recognition. Please check microphone permissions.",
+          ),
+        );
+        return false;
       }
     } catch (e) {
+      log('HomeCubit: Error starting speech recognition: $e');
       isListening = false;
-      emit(HomeSpeechToTextErrorState("Failed to start listening: $e"));
+      emit(
+        HomeSpeechToTextErrorState("Speech recognition error: ${e.toString()}"),
+      );
+      return false;
     }
   }
 
-  void stopListening() async {
+  Future<void> stopListening() async {
     try {
-      await homeRepo.stopListening();
-      isListening = false;
-      emit(HomeSpeechToTextStoppedState());
+      log('HomeCubit: Stopping speech recognition');
+      if (isListening) {
+        await homeRepo.stopListening();
+        isListening = false;
+        // Only emit stopped state if we have recognized text
+        if (recognizedText.isNotEmpty) {
+          emit(HomeSpeechToTextStoppedState(recognizedText));
+        } else {
+          emit(HomeSpeechToTextErrorState("No speech was recognized"));
+        }
+        log('HomeCubit: Speech recognition stopped');
+      }
     } catch (e) {
+      log('HomeCubit: Error stopping speech recognition: $e');
+      isListening = false;
       emit(HomeSpeechToTextErrorState("Failed to stop listening: $e"));
     }
   }
