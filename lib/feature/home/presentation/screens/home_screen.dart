@@ -1,3 +1,5 @@
+import 'package:chatgpt/core/di/dependency_injection.dart';
+import 'package:chatgpt/core/services/firebase_store_service.dart';
 import 'package:chatgpt/core/theme/app_textstyles.dart';
 import 'package:chatgpt/feature/home/presentation/cubits/cubit/home_cubit.dart';
 import 'package:chatgpt/feature/home/presentation/screens/widgets/chat_message.dart';
@@ -6,11 +8,35 @@ import 'package:chatgpt/feature/home/presentation/screens/widgets/home_fuctional
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String firstName = '';
+  String secondName = '';
+
+  @override
+  void initState() {
+    getIt<FirebaseStoreService>().getCurrentUserData().then((userData) {
+      setState(() {
+        firstName = userData?['firstName'] ?? '';
+        secondName = userData?['lastName'] ?? '';
+      });
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Load chat history when screen builds
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HomeCubit>().loadChatHistory();
+    });
+
     return Scaffold(
       backgroundColor: Color(0xFFF8F8F8),
       appBar: AppBar(
@@ -29,17 +55,23 @@ class HomeScreen extends StatelessWidget {
               ),
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.add, size: 30)),
+          IconButton(
+            onPressed: () {
+              context.read<HomeCubit>().createNewChat();
+            },
+            icon: Icon(Icons.add, size: 30),
+          ),
         ],
       ),
-      drawer: DrawerMenu(),
+      drawer: DrawerMenu(firstName: firstName, secondName: secondName),
       body: Column(
         children: [
           Expanded(
             child: BlocBuilder<HomeCubit, HomeState>(
               builder: (context, state) {
                 // Always get messages from cubit to ensure consistency
-                final messages = context.read<HomeCubit>().chatMessages;
+                final cubit = context.read<HomeCubit>();
+                final messages = cubit.chatMessages;
 
                 // Handle empty message list
                 if (messages.isEmpty) {

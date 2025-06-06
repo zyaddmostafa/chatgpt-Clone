@@ -120,7 +120,7 @@ class _VoiceRecordingDialogState extends State<VoiceRecordingDialog>
 
   void _handleBlocState(HomeState state) {
     if (state is HomeSpeechToTextErrorState) {
-      _handleSpeechError(state.error);
+      _handleSpeechError(state.errorMessage);
     } else if (state is HomeSpeechToTextSuccessState) {
       _handleSpeechSuccess(state.recognizedText);
     } else if (state is HomeSpeechToTextStoppedState) {

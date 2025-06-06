@@ -34,7 +34,7 @@ class HomeFuctionalityBottomBar extends StatelessWidget {
 
               builder: (context, state) {
                 state as HomeImagePickedState;
-                return ShowPickedImage(pickedImage: state.image);
+                return ShowPickedImage(pickedImage: state.pickedImage);
               },
             ),
           // Text field without shape

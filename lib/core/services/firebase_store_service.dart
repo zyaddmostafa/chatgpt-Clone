@@ -70,4 +70,49 @@ class FirebaseStoreService {
 
     return normalized;
   }
+
+  /// Get user data from Firestore using email
+  Future<Map<String, dynamic>?> getUserByEmail(String email) async {
+    try {
+      if (email.trim().isEmpty) {
+        throw Exception("Email cannot be empty");
+      }
+
+      final querySnapshot =
+          await firestore
+              .collection(ApiConstants.userCollection)
+              .where('email', isEqualTo: email.trim().toLowerCase())
+              .limit(1)
+              .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // Return the user data along with document ID
+        final doc = querySnapshot.docs.first;
+        final userData = doc.data();
+        userData['docId'] = doc.id; // Include document ID for future operations
+        return userData;
+      }
+
+      return null; // User not found
+    } catch (e) {
+      log('Error getting user by email: $e');
+      return null;
+    }
+  }
+
+  /// Get current authenticated user data from Firestore
+  Future<Map<String, dynamic>?> getCurrentUserData() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser?.email == null) {
+        log('No authenticated user found');
+        return null;
+      }
+
+      return await getUserByEmail(currentUser!.email!);
+    } catch (e) {
+      log('Error getting current user data: $e');
+      return null;
+    }
+  }
 }
