@@ -1,8 +1,3 @@
-import 'dart:io';
-
-import 'package:chatgpt/core/di/dependency_injection.dart';
-import 'package:chatgpt/core/services/firebase_auth_service.dart';
-import 'package:chatgpt/core/services/firebase_store_service.dart';
 import 'package:chatgpt/core/theme/app_color.dart';
 import 'package:chatgpt/core/theme/app_textstyles.dart';
 import 'package:chatgpt/core/utils/extention.dart';
@@ -22,6 +17,7 @@ class DrawerMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userName = '$firstName $secondName';
     return Drawer(
       child: Column(
         children: [
@@ -37,7 +33,7 @@ class DrawerMenu extends StatelessWidget {
                       radius: 32,
                       backgroundColor: AppColor.lightGreyColor,
                       child: Text(
-                        _getInitials(firstName, secondName),
+                        _getInitials(userName),
                         style: AppTextstyles.font16Regular.copyWith(
                           color: Colors.cyan,
                         ),
@@ -142,8 +138,10 @@ class DrawerMenu extends StatelessWidget {
   }
 }
 
-String _getInitials(String firstName, String secondName) {
+String _getInitials(String name) {
+  final names = name.split(' ');
+  final firstName = names.isNotEmpty ? names[0] : '';
   final firstInitial = firstName.isNotEmpty ? firstName[0] : '';
-  final secondInitial = secondName.isNotEmpty ? secondName[0] : '';
+  final secondInitial = names.length > 1 ? names[1][0] : '';
   return (firstInitial + secondInitial).toUpperCase();
 }

@@ -12,7 +12,20 @@
           "package_name": "com.example.chatgpt"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "117804250485-kbl7j2u3dpp3a6b2mogumbg97b4bbt5a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatgpt",
+            "certificate_hash": "07a4a09f8ac1da58eea2d29540c142bfdc1e0cc3"
+          }
+        },
+        {
+          "client_id": "117804250485-otbj59qa7mv3vlbbpb45lmdvsqsdmrr5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCngNm1Xy_bi9j9zST-hdwvJiLLjJ220xM"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "117804250485-otbj59qa7mv3vlbbpb45lmdvsqsdmrr5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "117804250485-9e7fhdhlq43nipn7kd2krf3t7pqj6ptl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.chatgpt"
+              }
+            }
+          ]
         }
       }
     }

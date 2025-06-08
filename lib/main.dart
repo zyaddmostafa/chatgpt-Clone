@@ -33,10 +33,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(fontFamily: 'PingFang SC'),
         debugShowCheckedModeBanner: false,
         onGenerateRoute: AppRoutes.ongenerateRoute,
-        initialRoute:
-            getIt<FirebaseAuthService>().isLoggedIn()
-                ? Routes.homeScreen
-                : Routes.welcomeScreen,
+        initialRoute: Routes.welcomeScreen,
       ),
     );
   }

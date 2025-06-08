@@ -32,7 +32,10 @@ class FirebaseStoreService {
     }
 
     // Email doesn't exist, proceed with adding data
-    await firestore.collection(ApiConstants.userCollection).add(userData);
+    await firestore
+        .collection(ApiConstants.userCollection)
+        .doc(user!.uid)
+        .set(userData, SetOptions(merge: true));
   }
 
   /// Check if a phone number is already verified in the system

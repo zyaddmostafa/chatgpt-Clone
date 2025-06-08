@@ -10,7 +10,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseAuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseStoreService _firebaseStoreService =
       getIt<FirebaseStoreService>();
 
@@ -58,40 +57,27 @@ class FirebaseAuthService {
   }
 
   Future<UserCredential> loginWithGoogle() async {
-    try {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      if (googleUser == null) {
-        throw Exception('Google sign in was cancelled by user');
-      }
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
 
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+    // Once signed in, return the UserCredential
+    final userCredential = await FirebaseAuth.instance.signInWithCredential(
+      credential,
+    );
 
-      // Sign in with credential
-      final userCredential = await _firebaseAuth.signInWithCredential(
-        credential,
-      );
-
-      // Always save/update user data (merge handles existing users)
-      // if (userCredential.user != null) {
-      //   await _saveUserDataToFirestore(userCredential.user!, 'google');
-      // }
-
-      return userCredential;
-    } catch (e) {
-      print('Error signing in with Google: $e');
-      rethrow;
-    }
+    return userCredential;
   }
+
   // verify phone number
   // Update your verifyPhoneNumber method
 
