@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:chatgpt/core/theme/app_color.dart';
 import 'package:chatgpt/core/theme/app_textstyles.dart';
-import 'package:chatgpt/feature/home/presentation/cubits/cubit/home_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/home/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -75,7 +75,7 @@ class _VoiceRecordingDialogState extends State<VoiceRecordingDialog>
   Future<void> _startListening() async {
     try {
       _resetState();
-      await _cubit.startListening();
+      await _cubit.speechCubit.startListening();
       if (mounted) {
         setState(() => _isStartingListening = false);
       }
@@ -318,7 +318,7 @@ class _VoiceRecordingDialogState extends State<VoiceRecordingDialog>
 
   Future<void> _handleCancel() async {
     if (_isListening) {
-      await _cubit.stopListening();
+      await _cubit.speechCubit.stopListening();
     }
     Navigator.pop(context);
   }
@@ -327,7 +327,7 @@ class _VoiceRecordingDialogState extends State<VoiceRecordingDialog>
     if (!_isListening || _isStartingListening) return const SizedBox.shrink();
 
     return TextButton(
-      onPressed: () => _cubit.stopListening(),
+      onPressed: () => _cubit.speechCubit.stopListening(),
       style: TextButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         backgroundColor: AppColor.primaryColor.withOpacity(0.1),

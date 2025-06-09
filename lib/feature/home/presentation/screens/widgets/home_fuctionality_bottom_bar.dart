@@ -1,6 +1,6 @@
 import 'package:chatgpt/core/theme/app_color.dart';
 import 'package:chatgpt/core/theme/app_textstyles.dart';
-import 'package:chatgpt/feature/home/presentation/cubits/cubit/home_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/home/home_cubit.dart';
 import 'package:chatgpt/feature/home/presentation/screens/widgets/show_picked_image.dart';
 import 'package:chatgpt/feature/home/presentation/screens/widgets/voice_recording_dialog.dart';
 import 'package:flutter/material.dart';
@@ -105,7 +105,7 @@ class HomeFuctionalityBottomBar extends StatelessWidget {
                           .promptTextEditingController
                           .text;
                   if (cubit.pickedImage != null) {
-                    cubit.imageAnalyze(message: message);
+                    cubit.imageCubit.analyzeImage(message: message);
                   } else if (message.isNotEmpty) {
                     cubit.sendTextMessage(message);
                   } else {
@@ -150,7 +150,7 @@ void _showAttachmentOptions(BuildContext context) {
                       icon: Icons.camera_alt,
                       label: 'Camera',
                       onTap: () {
-                        cubit.pickImage(fromCamera: true);
+                        cubit.imageCubit.pickImage(fromCamera: true);
                         Navigator.pop(context);
                       },
                     ),
@@ -160,7 +160,7 @@ void _showAttachmentOptions(BuildContext context) {
                       icon: Icons.photo_library,
                       label: 'Gallery',
                       onTap: () {
-                        cubit.pickImage(fromCamera: false);
+                        cubit.imageCubit.pickImage(fromCamera: false);
                         Navigator.pop(context);
                       },
                     ),
@@ -170,7 +170,7 @@ void _showAttachmentOptions(BuildContext context) {
                       icon: Icons.attach_file,
                       label: 'Document',
                       onTap: () {
-                        cubit.pickImage(fromCamera: false);
+                        cubit.imageCubit.pickImage(fromCamera: false);
                         Navigator.pop(context);
                       },
                     ),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chatgpt/core/theme/app_textstyles.dart';
 import 'package:chatgpt/core/theme/app_color.dart';
-import 'package:chatgpt/feature/home/presentation/cubits/cubit/home_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/home/home_cubit.dart';
 import 'package:chatgpt/feature/home/data/models/chat_model.dart';
 
 class ChatHistoryWidget extends StatelessWidget {
@@ -128,7 +128,7 @@ class ChatHistoryWidget extends StatelessWidget {
               onPressed: () async {
                 try {
                   // Use the captured cubit reference instead of reading from dialogContext
-                  await cubit.deleteChat(chat.id);
+                  await cubit.chatCubit.deleteChat(chat.id);
                   Navigator.pop(dialogContext);
                   // Show success message using the original context
                   ScaffoldMessenger.of(context).showSnackBar(

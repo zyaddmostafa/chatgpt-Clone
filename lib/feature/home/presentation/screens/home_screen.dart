@@ -1,7 +1,7 @@
 import 'package:chatgpt/core/di/dependency_injection.dart';
 import 'package:chatgpt/core/services/firebase_store_service.dart';
 import 'package:chatgpt/core/theme/app_textstyles.dart';
-import 'package:chatgpt/feature/home/presentation/cubits/cubit/home_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/home/home_cubit.dart';
 import 'package:chatgpt/feature/home/presentation/screens/widgets/chat_message.dart';
 import 'package:chatgpt/feature/home/presentation/screens/widgets/drawer_menu.dart';
 import 'package:chatgpt/feature/home/presentation/screens/widgets/home_fuctionality_bottom_bar.dart';
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     // Load chat history when screen builds
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<HomeCubit>().loadChatHistory();
+      context.read<HomeCubit>().chatCubit.loadChatHistory();
     });
 
     return Scaffold(

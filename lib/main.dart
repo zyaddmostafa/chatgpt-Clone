@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chatgpt/app_bloc_observer.dart';
 import 'package:chatgpt/core/di/dependency_injection.dart';
 import 'package:chatgpt/core/routing/app_routes.dart';
@@ -33,7 +31,10 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(fontFamily: 'PingFang SC'),
         debugShowCheckedModeBanner: false,
         onGenerateRoute: AppRoutes.ongenerateRoute,
-        initialRoute: Routes.welcomeScreen,
+        initialRoute:
+            getIt<FirebaseAuthService>().isLoggedIn()
+                ? Routes.homeScreen
+                : Routes.welcomeScreen,
       ),
     );
   }

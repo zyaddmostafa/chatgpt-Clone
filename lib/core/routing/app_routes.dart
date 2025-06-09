@@ -11,7 +11,11 @@ import 'package:chatgpt/feature/auth/presentation/screens/login_loading_screen.d
 import 'package:chatgpt/feature/auth/presentation/screens/welcome_screen.dart';
 import 'package:chatgpt/feature/home/data/apis/gemeni_service.dart';
 import 'package:chatgpt/feature/home/data/repos/home_repo_impl.dart';
-import 'package:chatgpt/feature/home/presentation/cubits/cubit/home_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/chat/chat_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/home/home_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/image/image_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/message/message_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/speech/speech_cubit.dart';
 import 'package:chatgpt/feature/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chatgpt/core/routing/routes.dart';
@@ -80,8 +84,14 @@ class AppRoutes {
           builder:
               (_) => BlocProvider(
                 create:
-                    (context) =>
-                        HomeCubit(GeminiService(), getIt<HomeRepoImpl>()),
+                    (context) => HomeCubit(
+                      geminiService: getIt<GeminiService>(),
+                      homeRepo: getIt<HomeRepoImpl>(),
+                      chatCubit: getIt<ChatCubit>(),
+                      messageCubit: getIt<MessageCubit>(),
+                      imageCubit: getIt<ImageCubit>(),
+                      speechCubit: getIt<SpeechCubit>(),
+                    ),
                 child: const HomeScreen(),
               ),
         );

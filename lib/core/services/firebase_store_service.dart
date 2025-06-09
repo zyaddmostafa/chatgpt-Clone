@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:chatgpt/core/utils/api_constatns.dart';
+import 'package:chatgpt/core/widgets/error_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -10,13 +11,13 @@ class FirebaseStoreService {
   /// Adds user data to Firestore.
   Future<void> addUserData(User? user, Map<String, dynamic> userData) async {
     if (user?.uid == null) {
-      throw Exception("User is not authenticated");
+      throw ErrorMessage(message: "User is not authenticated");
     }
 
     // First check if email already exists
     final email = userData['email'] as String?;
     if (email == null) {
-      throw Exception("Email is required in user data");
+      throw ErrorMessage(message: "Email is required in user data");
     }
 
     final querySnapshot =
@@ -28,7 +29,7 @@ class FirebaseStoreService {
 
     if (querySnapshot.docs.isNotEmpty) {
       // Email already exists
-      throw Exception("User with this email already exists");
+      throw ErrorMessage(message: "User with this email already exists");
     }
 
     // Email doesn't exist, proceed with adding data
@@ -56,6 +57,7 @@ class FirebaseStoreService {
       return querySnapshot.docs.isNotEmpty;
     } catch (e) {
       log('Error checking phone verification status: $e');
+
       // In case of error, return false to allow verification to proceed
       return false;
     }
@@ -78,7 +80,7 @@ class FirebaseStoreService {
   Future<Map<String, dynamic>?> getUserByEmail(String email) async {
     try {
       if (email.trim().isEmpty) {
-        throw Exception("Email cannot be empty");
+        throw ErrorMessage(message: "Email cannot be empty");
       }
 
       final querySnapshot =

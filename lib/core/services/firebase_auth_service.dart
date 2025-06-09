@@ -57,25 +57,69 @@ class FirebaseAuthService {
   }
 
   Future<UserCredential> loginWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+      if (googleUser == null) {
+        throw const ErrorMessage(message: 'Google sign-in was cancelled');
+      }
 
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser.authentication;
 
-    // Once signed in, return the UserCredential
-    final userCredential = await FirebaseAuth.instance.signInWithCredential(
-      credential,
-    );
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
 
-    return userCredential;
+      // Sign in with the credential
+      final userCredential = await _firebaseAuth.signInWithCredential(
+        credential,
+      );
+
+      // Save user data to Firestore using the existing store service
+      if (userCredential.user != null) {
+        await _saveUserDataToFirestore(userCredential.user!, 'google');
+      }
+
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      log('Google login error: ${e.code} - ${e.message}');
+      throw ErrorMessage(message: AppRegex.getFirebaseAuthErrorMessage(e.code));
+    } catch (e) {
+      log('Google login general error: $e');
+      throw ErrorMessage(message: 'Something went wrong with Google sign-in');
+    }
+  }
+
+  Future<void> _saveUserDataToFirestore(User user, String signUpMethod) async {
+    try {
+      String firstName = user.displayName?.split(' ').first ?? '';
+      String lastName =
+          user.displayName?.split(' ').length == 2
+              ? user.displayName!.split(' ')[1]
+              : '';
+
+      String datetime = DateTime.now().toIso8601String();
+
+      final userData = {
+        'uid': user.uid,
+        'email': user.email,
+        'firstName': firstName,
+        'lastName': lastName,
+        'signUpMethod': signUpMethod,
+        'createdAt': datetime,
+      };
+
+      await _firebaseStoreService.addUserData(user, userData);
+    } catch (e) {
+      log('Error saving user data: $e');
+      // Don't throw here, as the main authentication succeeded
+      // Just log the error
+    }
   }
 
   // verify phone number
@@ -175,7 +219,14 @@ class FirebaseAuthService {
   }
 
   // user sign out
-  Future<void> signOut() async => await _firebaseAuth.signOut();
+  Future<void> signOut() async {
+    try {
+      await _firebaseAuth.signOut();
+      await GoogleSignIn().signOut();
+    } catch (e) {
+      log('FirebaseAuthService: signOut: Error signing out from Google: $e');
+    }
+  }
 
   // user delete
   Future<void> deleteUser() => _firebaseAuth.currentUser!.delete();

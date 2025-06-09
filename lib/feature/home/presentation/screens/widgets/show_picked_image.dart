@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:chatgpt/feature/home/presentation/cubits/cubit/home_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/home/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,7 +36,7 @@ class ShowPickedImage extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 // Clear the picked image
-                context.read<HomeCubit>().clearPickedImage();
+                context.read<HomeCubit>().imageCubit.clearPickedImage();
               },
               child: Container(
                 padding: EdgeInsets.all(4),

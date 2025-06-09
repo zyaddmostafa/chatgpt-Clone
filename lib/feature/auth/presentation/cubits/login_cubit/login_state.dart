@@ -13,3 +13,10 @@ final class LoginError extends LoginState {
   final String errorMessage;
   LoginError(this.errorMessage);
 }
+
+final class LogoutSuccess extends LoginState {}
+
+final class LogoutError extends LoginState {
+  final String errorMessage;
+  LogoutError(this.errorMessage);
+}
