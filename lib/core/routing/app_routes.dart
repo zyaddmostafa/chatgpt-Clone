@@ -9,6 +9,11 @@ import 'package:chatgpt/feature/auth/presentation/screens/sign_up_loading_screen
 import 'package:chatgpt/feature/auth/presentation/screens/sign_up_screen.dart';
 import 'package:chatgpt/feature/auth/presentation/screens/login_loading_screen.dart';
 import 'package:chatgpt/feature/auth/presentation/screens/welcome_screen.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/chat/chat_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/home/home_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/image/image_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/message/message_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/speech/speech_cubit.dart';
 import 'package:chatgpt/feature/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chatgpt/core/routing/routes.dart';
@@ -73,7 +78,29 @@ class AppRoutes {
           settings: settings,
         );
       case Routes.homeScreen:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+        return MaterialPageRoute(
+          builder:
+              (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<HomeCubit>(
+                    create: (context) => getIt<HomeCubit>(),
+                  ),
+                  BlocProvider<MessageCubit>(
+                    create: (context) => getIt<MessageCubit>(),
+                  ),
+                  BlocProvider<ImageCubit>(
+                    create: (context) => getIt<ImageCubit>(),
+                  ),
+                  BlocProvider<SpeechCubit>(
+                    create: (context) => getIt<SpeechCubit>(),
+                  ),
+                  BlocProvider<ChatCubit>(
+                    create: (context) => getIt<ChatCubit>(),
+                  ),
+                ],
+                child: const HomeScreen(),
+              ),
+        );
 
       case Routes.loginLoadingScreen:
         return MaterialPageRoute(

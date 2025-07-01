@@ -10,7 +10,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseAuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseStoreService _firebaseStoreService =
       getIt<FirebaseStoreService>();
 
@@ -60,38 +59,69 @@ class FirebaseAuthService {
   Future<UserCredential> loginWithGoogle() async {
     try {
       // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
-        throw Exception('Google sign in was cancelled by user');
+        throw const ErrorMessage(message: 'Google sign-in was cancelled');
       }
 
       // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
+      final GoogleSignInAuthentication? googleAuth =
           await googleUser.authentication;
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
       );
 
-      // Sign in with credential
+      // Sign in with the credential
       final userCredential = await _firebaseAuth.signInWithCredential(
         credential,
       );
 
-      // Always save/update user data (merge handles existing users)
-      // if (userCredential.user != null) {
-      //   await _saveUserDataToFirestore(userCredential.user!, 'google');
-      // }
+      // Save user data to Firestore using the existing store service
+      if (userCredential.user != null) {
+        await _saveUserDataToFirestore(userCredential.user!, 'google');
+      }
 
       return userCredential;
+    } on FirebaseAuthException catch (e) {
+      log('Google login error: ${e.code} - ${e.message}');
+      throw ErrorMessage(message: AppRegex.getFirebaseAuthErrorMessage(e.code));
     } catch (e) {
-      print('Error signing in with Google: $e');
-      rethrow;
+      log('Google login general error: $e');
+      throw ErrorMessage(message: 'Something went wrong with Google sign-in');
     }
   }
+
+  Future<void> _saveUserDataToFirestore(User user, String signUpMethod) async {
+    try {
+      String firstName = user.displayName?.split(' ').first ?? '';
+      String lastName =
+          user.displayName?.split(' ').length == 2
+              ? user.displayName!.split(' ')[1]
+              : '';
+
+      String datetime = DateTime.now().toIso8601String();
+
+      final userData = {
+        'uid': user.uid,
+        'email': user.email,
+        'firstName': firstName,
+        'lastName': lastName,
+        'signUpMethod': signUpMethod,
+        'createdAt': datetime,
+      };
+
+      await _firebaseStoreService.addUserData(user, userData);
+    } catch (e) {
+      log('Error saving user data: $e');
+      // Don't throw here, as the main authentication succeeded
+      // Just log the error
+    }
+  }
+
   // verify phone number
   // Update your verifyPhoneNumber method
 
@@ -189,7 +219,14 @@ class FirebaseAuthService {
   }
 
   // user sign out
-  Future<void> signOut() async => await _firebaseAuth.signOut();
+  Future<void> signOut() async {
+    try {
+      await _firebaseAuth.signOut();
+      await GoogleSignIn().signOut();
+    } catch (e) {
+      log('FirebaseAuthService: signOut: Error signing out from Google: $e');
+    }
+  }
 
   // user delete
   Future<void> deleteUser() => _firebaseAuth.currentUser!.delete();

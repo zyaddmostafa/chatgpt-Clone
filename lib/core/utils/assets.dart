@@ -18,6 +18,10 @@ class Assets {
   /// assets/images/smaller_app_icon.png
   static const String assetsImagesSmallerAppIcon = "assets/images/smaller_app_icon.png";
 
+  /// Assets for assetsSvgsAvatarChatGPT
+  /// assets/svgs/AvatarChatGPT.svg
+  static const String assetsSvgsAvatarChatGPT = "assets/svgs/AvatarChatGPT.svg";
+
   /// Assets for assetsSvgsGoogle
   /// assets/svgs/google.svg
   static const String assetsSvgsGoogle = "assets/svgs/google.svg";
