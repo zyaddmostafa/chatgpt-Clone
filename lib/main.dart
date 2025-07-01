@@ -13,7 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await setupGetIt();
-  getIt<SpeechToTextService>().initializeSpeechState();
+  await getIt<SpeechToTextService>().initializeSpeechState();
   Bloc.observer = AppBlocObserver();
   runApp(const MyApp());
 }

@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:chatgpt/core/utils/permission_helper.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class SpeechToTextService {
@@ -7,25 +8,37 @@ class SpeechToTextService {
 
   Future<bool> initializeSpeechState() async {
     try {
+      log('SpeechService: Starting initialization');
+
+      // Check permissions first
+      bool hasPermission = await PermissionHelper.requestMicrophonePermission();
+      log('SpeechService: Microphone permission: $hasPermission');
+      if (!hasPermission) {
+        log('SpeechService: Microphone permission not granted');
+        _isInitialized = false;
+        return false;
+      }
+
       if (!_isInitialized) {
         _isInitialized = await _speechToText.initialize(
           onStatus: (status) {
-            log('Speech status: $status');
+            log('SpeechService: Status changed to: $status');
             if (status == 'done' || status == 'notListening') {
               log('Speech recognition completed with status: $status');
             }
           },
           onError: (errorNotification) {
             log(
-              'Speech error: ${errorNotification.errorMsg}, permanent: ${errorNotification.permanent}',
+              'SpeechService: Error occurred - ${errorNotification.errorMsg}, permanent: ${errorNotification.permanent}',
             );
             // Don't throw here, let the calling method handle it
           },
         );
+        log('SpeechService: Initialization result: $_isInitialized');
       }
       return _isInitialized;
     } catch (e) {
-      log('Failed to initialize speech: $e');
+      log('SpeechService: Failed to initialize speech: $e');
       _isInitialized = false;
       return false;
     }
@@ -45,6 +58,13 @@ class SpeechToTextService {
 
   Future<bool> startListen({required Function(String) onResult}) async {
     try {
+      // Check microphone permission first
+      bool hasPermission = await PermissionHelper.requestMicrophonePermission();
+      if (!hasPermission) {
+        log('Microphone permission not granted');
+        return false;
+      }
+
       if (!_isInitialized) {
         bool initialized = await initializeSpeechState();
         if (!initialized) {

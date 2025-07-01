@@ -30,11 +30,16 @@ class HomeFuctionalityBottomBar extends StatelessWidget {
         children: [
           if (context.watch<HomeCubit>().pickedImage != null)
             BlocBuilder<HomeCubit, HomeState>(
-              buildWhen: (previous, current) => current is HomeImagePickedState,
-
+              buildWhen:
+                  (previous, current) =>
+                      current is HomeImagePickedState ||
+                      current is HomeClearPickedImageState,
               builder: (context, state) {
-                state as HomeImagePickedState;
-                return ShowPickedImage(pickedImage: state.pickedImage);
+                final pickedImage = context.read<HomeCubit>().pickedImage;
+                if (pickedImage != null) {
+                  return ShowPickedImage(pickedImage: pickedImage);
+                }
+                return SizedBox.shrink();
               },
             ),
           // Text field without shape
@@ -105,12 +110,24 @@ class HomeFuctionalityBottomBar extends StatelessWidget {
                           .promptTextEditingController
                           .text;
                   if (cubit.pickedImage != null) {
-                    cubit.imageCubit.analyzeImage(message: message);
+                    // Send image with message
+                    cubit.analyzeImageWithMessage(
+                      message: message.isNotEmpty ? message : null,
+                    );
+                    // Clear the text field and image
+                    cubit.promptTextEditingController.clear();
+                    cubit.clearPickedImage();
                   } else if (message.isNotEmpty) {
+                    // Send text message
                     cubit.sendTextMessage(message);
+                    cubit.promptTextEditingController.clear();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Please enter a message')),
+                      SnackBar(
+                        content: Text(
+                          'Please enter a message or select an image',
+                        ),
+                      ),
                     );
                   }
                 },
@@ -150,7 +167,7 @@ void _showAttachmentOptions(BuildContext context) {
                       icon: Icons.camera_alt,
                       label: 'Camera',
                       onTap: () {
-                        cubit.imageCubit.pickImage(fromCamera: true);
+                        cubit.pickImageFromCamera();
                         Navigator.pop(context);
                       },
                     ),
@@ -160,7 +177,7 @@ void _showAttachmentOptions(BuildContext context) {
                       icon: Icons.photo_library,
                       label: 'Gallery',
                       onTap: () {
-                        cubit.imageCubit.pickImage(fromCamera: false);
+                        cubit.pickImageFromGallery();
                         Navigator.pop(context);
                       },
                     ),
@@ -170,7 +187,7 @@ void _showAttachmentOptions(BuildContext context) {
                       icon: Icons.attach_file,
                       label: 'Document',
                       onTap: () {
-                        cubit.imageCubit.pickImage(fromCamera: false);
+                        cubit.pickImageFromGallery();
                         Navigator.pop(context);
                       },
                     ),

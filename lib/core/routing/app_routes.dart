@@ -9,8 +9,6 @@ import 'package:chatgpt/feature/auth/presentation/screens/sign_up_loading_screen
 import 'package:chatgpt/feature/auth/presentation/screens/sign_up_screen.dart';
 import 'package:chatgpt/feature/auth/presentation/screens/login_loading_screen.dart';
 import 'package:chatgpt/feature/auth/presentation/screens/welcome_screen.dart';
-import 'package:chatgpt/feature/home/data/apis/gemeni_service.dart';
-import 'package:chatgpt/feature/home/data/repos/home_repo_impl.dart';
 import 'package:chatgpt/feature/home/presentation/cubits/chat/chat_cubit.dart';
 import 'package:chatgpt/feature/home/presentation/cubits/home/home_cubit.dart';
 import 'package:chatgpt/feature/home/presentation/cubits/image/image_cubit.dart';
@@ -82,16 +80,24 @@ class AppRoutes {
       case Routes.homeScreen:
         return MaterialPageRoute(
           builder:
-              (_) => BlocProvider(
-                create:
-                    (context) => HomeCubit(
-                      geminiService: getIt<GeminiService>(),
-                      homeRepo: getIt<HomeRepoImpl>(),
-                      chatCubit: getIt<ChatCubit>(),
-                      messageCubit: getIt<MessageCubit>(),
-                      imageCubit: getIt<ImageCubit>(),
-                      speechCubit: getIt<SpeechCubit>(),
-                    ),
+              (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<HomeCubit>(
+                    create: (context) => getIt<HomeCubit>(),
+                  ),
+                  BlocProvider<MessageCubit>(
+                    create: (context) => getIt<MessageCubit>(),
+                  ),
+                  BlocProvider<ImageCubit>(
+                    create: (context) => getIt<ImageCubit>(),
+                  ),
+                  BlocProvider<SpeechCubit>(
+                    create: (context) => getIt<SpeechCubit>(),
+                  ),
+                  BlocProvider<ChatCubit>(
+                    create: (context) => getIt<ChatCubit>(),
+                  ),
+                ],
                 child: const HomeScreen(),
               ),
         );

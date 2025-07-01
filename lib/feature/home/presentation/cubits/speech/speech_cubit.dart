@@ -20,28 +20,36 @@ class SpeechCubit extends Cubit<SpeechState> {
         await stopListening();
       }
 
+      // Reset state
+      recognizedText = '';
+      isListening = false;
+
       // Check availability first
       bool available = await homeRepo.isAvailable();
+      log('SpeechCubit: Speech availability check: $available');
       if (!available) {
         log('SpeechCubit: Speech recognition not available');
         emit(SpeechError("Speech recognition not available on this device"));
         return false;
       }
 
-      // Reset state
-      recognizedText = '';
+      // Emit listening state before starting
       emit(SpeechListening());
+      log('SpeechCubit: Emitted SpeechListening state');
 
-      // Start listening
+      // Start listening with detailed error handling
       bool started = await homeRepo.startListening(
         onResult: (text) {
           log('SpeechCubit: Speech result received: $text');
           recognizedText = text;
           if (text.isNotEmpty) {
             emit(SpeechResult(recognizedText));
+            log('SpeechCubit: Emitted SpeechResult with: $text');
           }
         },
       );
+
+      log('SpeechCubit: startListening returned: $started');
 
       if (started) {
         isListening = true;
@@ -58,7 +66,7 @@ class SpeechCubit extends Cubit<SpeechState> {
         return false;
       }
     } catch (e) {
-      log('SpeechCubit: Error starting speech recognition: $e');
+      log('SpeechCubit: Exception in startListening: $e');
       isListening = false;
       emit(SpeechError("Speech recognition error: ${e.toString()}"));
       return false;

@@ -8,6 +8,7 @@ import 'package:chatgpt/feature/home/data/apis/gemeni_service.dart';
 import 'package:chatgpt/feature/home/data/apis/speech_to_text_service.dart';
 import 'package:chatgpt/feature/home/data/repos/home_repo_impl.dart';
 import 'package:chatgpt/feature/home/presentation/cubits/chat/chat_cubit.dart';
+import 'package:chatgpt/feature/home/presentation/cubits/home/home_cubit.dart';
 import 'package:chatgpt/feature/home/presentation/cubits/image/image_cubit.dart';
 import 'package:chatgpt/feature/home/presentation/cubits/message/message_cubit.dart';
 import 'package:chatgpt/feature/home/presentation/cubits/speech/speech_cubit.dart';
@@ -59,5 +60,17 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton<ChatCubit>(() => ChatCubit());
   getIt.registerLazySingleton<SpeechCubit>(
     () => SpeechCubit(getIt<HomeRepoImpl>()),
+  );
+
+  // Register HomeCubit - Add this missing registration
+  getIt.registerFactory<HomeCubit>(
+    () => HomeCubit(
+      geminiService: getIt<GeminiService>(),
+      homeRepo: getIt<HomeRepoImpl>(),
+      chatCubit: getIt<ChatCubit>(),
+      messageCubit: getIt<MessageCubit>(),
+      imageCubit: getIt<ImageCubit>(),
+      speechCubit: getIt<SpeechCubit>(),
+    ),
   );
 }
