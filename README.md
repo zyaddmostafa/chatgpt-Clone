@@ -1,134 +1,132 @@
-# ChatGPT Flutter App
+# 🤖 ChatGPT Flutter App
 
-A robust, modular, and scalable Flutter application featuring authentication, chat, and home functionalities, leveraging Firebase and modern state management. This project is organized for maintainability and extensibility, following best practices in folder structure and code separation.
+<div align="center">
+  <img src="assets/images/app_logo.png" alt="ChatGPT App Logo" width="120" height="120">
+  <h3>A powerful AI-powered chat application built with Flutter</h3>
+  
+  ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
+  ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
+  ![Google Gemini](https://img.shields.io/badge/Google%20Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white)
+  ![BLoC](https://img.shields.io/badge/BLoC-3178C6?style=for-the-badge&logo=dart&logoColor=white)
 
----
+</div>
 
-## Features
+## 📱 Features
 
-- **Authentication**: Sign up, login, phone verification, and social media authentication.
-- **Chat**: Real-time chat interface, chat history, and message management.
-- **Home**: Main app dashboard, voice recording, image picking, and more.
-- **Firebase Integration**: Auth and Firestore services.
-- **State Management**: Cubit-based architecture for clear separation of business logic.
+### 🔐 **Authentication System**
 
----
+- **Firebase Authentication** with multiple sign-in methods
+- **Google Sign-In** integration
+- **Phone Number Verification** with OTP
+- **User Profile Management** with Firebase Firestore
+- **Secure Session Management** with automatic login detection
 
-## Project Structure
+### 💬 **AI Chat Features**
+
+- **Google Gemini AI Integration** for intelligent conversations
+- **Real-time Chat** with message history
+- **Image Analysis** - Upload images and get AI-powered analysis
+- **Speech-to-Text** functionality for voice input
+- **Chat History** management with Firebase Cloud Firestore
+- **Multiple Chat Sessions** support
+
+### 🎨 **User Interface**
+
+- **Modern Material Design** with custom theming
+- **Responsive Design** using ScreenUtil
+- **Dark/Light Mode** support
+- **Custom Animations** and smooth transitions
+- **Intuitive Navigation** with drawer menu
+- **Cross-platform** compatibility (Android, iOS, Web, Desktop)
+
+### 🔧 **Technical Features**
+
+- **Clean Architecture** with separation of concerns
+- **BLoC State Management** for reactive programming
+- **Dependency Injection** using GetIt
+- **Error Handling** with user-friendly messages
+- **Offline Support** with local data caching
+- **Permission Management** for camera, microphone, and storage
+
+## 🏗️ Project Structure
 
 ```
 lib/
+├── 📁 core/                          # Core utilities and shared components
+│   ├── 📁 di/                        # Dependency injection setup
+│   │   └── dependency_injection.dart  # GetIt configuration
+│   ├── 📁 routing/                   # App navigation
+│   │   ├── app_routes.dart           # Route definitions
+│   │   └── routes.dart               # Route constants
+│   ├── 📁 services/                  # External services
+│   │   ├── firebase_auth_service.dart # Firebase authentication
+│   │   └── firebase_store_service.dart # Firestore operations
+│   ├── 📁 theme/                     # App theming
+│   │   ├── app_color.dart            # Color definitions
+│   │   └── app_textstyles.dart       # Text style definitions
+│   ├── 📁 utils/                     # Utility functions
+│   │   ├── permission_helper.dart     # Permission management
+│   │   ├── assets.dart               # Asset path definitions
+│   │   ├── extention.dart            # Dart extensions
+│   │   └── app_regex.dart            # Validation patterns
+│   └── 📁 widgets/                   # Reusable UI components
+│       ├── custom_app_button.dart    # Custom button widget
+│       ├── custom_text_form_field.dart # Custom input field
+│       └── error_message.dart        # Error display widget
 │
-├── main.dart
-├── app_bloc_observer.dart
-├── firebase_options.dart
-│
-├── core/
-│   ├── di/
-│   │   └── dependency_injection.dart
-│   ├── routing/
-│   │   ├── app_routes.dart
-│   │   └── routes.dart
-│   ├── services/
-│   │   ├── firebase_auth_service.dart
-│   │   └── firebase_store_service.dart
-│   ├── theme/
-│   │   ├── app_color.dart
-│   │   └── app_textstyles.dart
-│   ├── utils/
-│   │   ├── api_constatns.dart
-│   │   ├── app_regex.dart
-│   │   ├── assets.dart
-│   │   ├── extention.dart
-│   │   ├── screen_size.dart
-│   │   ├── snack_bar.dart
-│   │   └── spacing.dart
-│   └── widgets/
-│       ├── custom_app_button.dart
-│       ├── custom_divider.dart
-│       ├── custom_text_form_field.dart
-│       └── error_message.dart
-│
-├── feature/
-│   ├── auth/
-│   │   ├── data/
-│   │   │   ├── models/
+├── 📁 feature/                       # Feature-based modules
+│   ├── 📁 auth/                      # Authentication feature
+│   │   ├── 📁 data/                  # Data layer
+│   │   │   ├── 📁 models/            # Data models
 │   │   │   │   ├── country_model.dart
 │   │   │   │   ├── login_request_body.dart
-│   │   │   │   ├── sign_up_request_body.dart
-│   │   │   │   └── sign_up_request_body.g.dart
-│   │   │   └── repos/
+│   │   │   │   └── sign_up_request_body.dart
+│   │   │   └── 📁 repos/             # Repository implementations
 │   │   │       ├── login_repo_impl.dart
 │   │   │       └── sign_up_repo_impl.dart
-│   │   └── presentation/
-│   │       ├── cubits/
-│   │       │   ├── login_cubit/
-│   │       │   │   ├── login_cubit.dart
-│   │       │   │   └── login_state.dart
-│   │       │   └── signup_cubit/
-│   │       │       ├── sign_up_cubit.dart
-│   │       │       └── sign_up_state.dart
-│   │       └── screens/
-│   │           ├── enter_code_screen.dart
-│   │           ├── enter_name_screen.dart
-│   │           ├── login_loading_screen.dart
-│   │           ├── login_screen.dart
-│   │           ├── phone_number_verification.dart
-│   │           ├── sign_up_loading_screen.dart
-│   │           ├── sign_up_screen.dart
+│   │   └── 📁 presentation/          # Presentation layer
+│   │       ├── 📁 cubits/            # BLoC state management
+│   │       │   ├── 📁 login_cubit/   # Login state management
+│   │       │   └── 📁 signup_cubit/  # Sign-up state management
+│   │       └── 📁 screens/           # UI screens
 │   │           ├── welcome_screen.dart
-│   │           └── widgets/
-│   │               ├── already_have_an_account.dart
+│   │           ├── login_screen.dart
+│   │           ├── sign_up_screen.dart
+│   │           ├── phone_number_verification.dart
+│   │           └── 📁 widgets/       # Feature-specific widgets
 │   │               ├── auth_header.dart
-│   │               ├── enter_code_form.dart
-│   │               ├── enter_name_form.dart
-│   │               ├── login_button_bloc_consumer.dart
 │   │               ├── login_form.dart
-│   │               ├── phone_verification_form.dart
 │   │               ├── sign_up_form.dart
 │   │               └── social_media_auth.dart
 │   │
-│   └── home/
-│       ├── data/
-│       │   ├── apis/
-│       │   │   ├── constants.dart
-│       │   │   ├── gemeni_service.dart
-│       │   │   └── speech_to_text_service.dart
-│       │   ├── models/
-│       │   │   ├── chat_message_model.dart
-│       │   │   ├── chat_message_model.g.dart
-│       │   │   ├── chat_model.dart
-│       │   │   └── chat_model.g.dart
-│       │   └── repos/
+│   └── 📁 home/                      # Main chat feature
+│       ├── 📁 data/                  # Data layer
+│       │   ├── 📁 apis/              # External API services
+│       │   │   ├── gemeni_service.dart      # Google Gemini integration
+│       │   │   └── speech_to_text_service.dart # Speech recognition
+│       │   ├── 📁 models/            # Data models
+│       │   │   ├── chat_model.dart           # Chat session model
+│       │   │   └── chat_message_model.dart   # Message model
+│       │   └── 📁 repos/             # Repository implementations
 │       │       ├── chat_repository.dart
 │       │       └── home_repo_impl.dart
-│       └── presentation/
-│           ├── cubits/
-│           │   ├── chat/
-│           │   │   ├── chat_cubit.dart
-│           │   │   └── chat_state.dart
-│           │   ├── home/
-│           │   │   ├── home_cubit.dart
-│           │   │   └── home_state.dart
-│           │   ├── image/
-│           │   │   ├── image_cubit.dart
-│           │   │   └── image_state.dart
-│           │   ├── message/
-│           │   │   ├── message_cubit.dart
-│           │   │   └── message_state.dart
-│           │   └── speech/
-│           │       ├── speech_cubit.dart
-│           │       └── speech_state.dart
-│           └── screens/
-│               ├── home_screen.dart
-│               └── widgets/
-│                   ├── chat_history_widget.dart
+│       └── 📁 presentation/          # Presentation layer
+│           ├── 📁 cubits/            # State management
+│           │   ├── 📁 home/          # Main coordinator cubit
+│           │   ├── 📁 chat/          # Chat session management
+│           │   ├── 📁 message/       # Message handling
+│           │   ├── 📁 image/         # Image processing
+│           │   └── 📁 speech/        # Speech recognition
+│           └── 📁 screens/           # UI screens
+│               ├── home_screen.dart   # Main chat interface
+│               └── 📁 widgets/       # Home feature widgets
 │                   ├── chat_message.dart
-│                   ├── drawer_content.dart
-│                   ├── drawer_menu.dart
-│                   ├── home_fuctionality_bottom_bar.dart
+│                   ├── voice_recording_dialog.dart
 │                   ├── show_picked_image.dart
-│                   └── voice_recording_dialog.dart
+│                   ├── drawer_menu.dart
+│                   └── home_fuctionality_bottom_bar.dart
+│
+├── firebase_options.dart             # Firebase configuration
+├── main.dart                        # App entry point
+└── app_bloc_observer.dart           # BLoC debugging
 ```
-
----
